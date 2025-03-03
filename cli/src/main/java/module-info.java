@@ -5,5 +5,7 @@ module vigilia.cli {
     requires jakarta.annotation;
     requires com.fasterxml.jackson.databind;
 
+    opens org.schlunzis.vigilia.cli.model to com.fasterxml.jackson.databind;
+
     exports org.schlunzis.vigilia.cli;
 }
