@@ -11,13 +11,6 @@
 
     <artifactId>cli</artifactId>
 
-    <properties>
-        <maven.compiler.source>23</maven.compiler.source>
-        <maven.compiler.target>23</maven.compiler.target>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <jakarta-annotation-version>2.1.1</jakarta-annotation-version>
-    </properties>
-
     <dependencies>
         <!-- JSON processing: jackson -->
         <dependency>
@@ -49,7 +42,6 @@
         <dependency>
             <groupId>jakarta.annotation</groupId>
             <artifactId>jakarta.annotation-api</artifactId>
-            <version>${jakarta-annotation-version}</version>
         </dependency>
     </dependencies>
 
@@ -69,6 +61,9 @@
                             <library>native</library>
                             <apiPackage>org.schlunzis.vigilia.cli.api</apiPackage>
                             <modelPackage>org.schlunzis.vigilia.cli.model</modelPackage>
+                            <supportingFilesToGenerate>
+                                DefaultApi.java,SearchResultDTO.java,ApiClient.java,ApiException.java,ApiResponse.java,Pair.java
+                            </supportingFilesToGenerate>
                             <configOptions>
                                 <configPackage>org.schlunzis.vigilia.cli.config</configPackage>
                                 <useJakartaEe>true</useJakartaEe>
