@@ -1,0 +1,61 @@
+openapi: 3.0.3
+info:
+  title: Vigilia
+  description: API for the Vigilia Service
+  version: 1.0.0
+
+servers:
+  - url: 'http://localhost:54913/api'
+
+paths:
+  /index:
+    post:
+      summary: Index new files
+      description: Index new files
+      operationId: IndexFiles
+      requestBody:
+        content:
+          text/plain:
+            schema:
+              type: string
+      responses:
+        '200':
+          description: Indexing successful
+        '400':
+          description: Bad request
+        '500':
+          description: Internal server error
+  /search:
+    post:
+      summary: Search for files
+      description: Search for files
+      operationId: SearchFiles
+      requestBody:
+        content:
+          text/plain:
+            schema:
+              type: string
+      responses:
+        '200':
+          description: Search successful
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/searchResult'
+        '400':
+          description: Bad request
+        '500':
+          description: Internal server error
+
+components:
+  schemas:
+    searchResult:
+      type: object
+      properties:
+        path:
+          type: string
+        score:
+          type: number
+          format: float
