@@ -4,6 +4,9 @@ module vigilia.gui.fx {
     requires org.openapitools.jackson.nullable;
     requires jakarta.annotation;
     requires com.fasterxml.jackson.databind;
+    requires javafx.graphics;
+    requires javafx.controls;
+    requires static lombok;
 
     opens org.schlunzis.vigilia.gui.fx.model to com.fasterxml.jackson.databind;
 
