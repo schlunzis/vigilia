@@ -19,7 +19,7 @@ public class VigiliaApplication extends Application {
     public void start(Stage stage) {
         TabbedStagesManager<Type> tabbedStagesManager = TabbedStagesManager.create(stage);
         tabbedStagesManager.setDefaultTabType(Type.SEARCH);
-        tabbedStagesManager.setTabContentFactory(new VTabContentFactory());
+        tabbedStagesManager.setTabContentFactory(new VTabContentFactory(tabbedStagesManager));
         tabbedStagesManager.addTab(Type.SEARCH);
         stage.show();
     }

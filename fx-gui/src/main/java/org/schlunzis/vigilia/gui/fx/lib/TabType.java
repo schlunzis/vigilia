@@ -4,4 +4,6 @@ public interface TabType {
 
     String getTabName();
 
+    boolean isOnlyOneInstance();
+
 }

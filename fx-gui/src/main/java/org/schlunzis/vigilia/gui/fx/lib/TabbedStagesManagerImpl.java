@@ -3,6 +3,7 @@ package org.schlunzis.vigilia.gui.fx.lib;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Tab;
+import javafx.scene.control.TabPane;
 import javafx.stage.Stage;
 import lombok.Getter;
 import lombok.Setter;
@@ -16,6 +17,7 @@ class TabbedStagesManagerImpl<T extends TabType> implements TabbedStagesManager<
     private final AtomicInteger counter = new AtomicInteger(0);
     private final Map<Integer, Stage> stages = new HashMap<>();
     private final Map<Integer, MainController<T>> controllers = new HashMap<>();
+    private final Map<T, Tab> tabs = new HashMap<>();
 
     @Setter
     private StageFactory stageFactory = new DefaultStageFactory();
@@ -41,12 +43,21 @@ class TabbedStagesManagerImpl<T extends TabType> implements TabbedStagesManager<
     }
 
     @Override
-    public void addTab(int stageId, T tab) {
-        MainController<T> controller = controllers.get(stageId);
-        Tab newTab = tabFactory.createTab(tab);
-        Node newTabContent = tabContentFactory.create(tab);
-        newTab.setContent(newTabContent);
-        controller.addTab(newTab);
+    public void addTab(int stageId, T tabType) {
+        MainController<T> controllerToAddTheTabTo = controllers.get(stageId);
+
+        Tab newTab;
+        if (tabType.isOnlyOneInstance()) {
+            newTab = tabs.computeIfAbsent(tabType, t -> tabFactory.createTab(t));
+            TabPane currentTabPane = newTab.getTabPane();
+            if (currentTabPane != null) currentTabPane.getTabs().remove(newTab);
+        } else {
+            newTab = tabFactory.createTab(tabType);
+            Node newTabContent = tabContentFactory.create(tabType);
+            newTab.setContent(newTabContent);
+        }
+
+        controllerToAddTheTabTo.addTab(newTab);
     }
 
     Stage createNewStage() {
