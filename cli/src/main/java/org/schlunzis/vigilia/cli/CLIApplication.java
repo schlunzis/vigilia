@@ -15,19 +15,20 @@ public class CLIApplication {
     static {
         OPTIONS.addOption("h", "help", false, "Print this message");
         OPTIONS.addOption("v", "version", false, "Print version information");
+
         OPTIONS.addOption(Option.builder()
                 .option("i")
                 .longOpt("index")
-                .hasArg()
-                .argName("path")
+                .hasArgs()
+                .argName("paths")
                 .desc("Index a file or directory")
                 .build());
         OPTIONS.addOption(Option.builder()
-                .option("s")
-                .longOpt("search")
-                .hasArg()
+                .option("q")
+                .longOpt("query")
+                .hasArgs()
                 .argName("query")
-                .desc("Search indexed files")
+                .desc("Query indexed files")
                 .build());
     }
 
@@ -53,15 +54,20 @@ public class CLIApplication {
             log.log(CLIApplication.class.getPackage().getImplementationVersion());
             return;
         }
-
-
         DefaultApi api = new DefaultApi();
-        api.indexFiles(List.of("path"));
 
+        if (cmd.hasOption("i")) {
+            String[] paths = cmd.getOptionValues("i");
+            api.indexFiles(List.of(paths));
+        }
 
-        List<SearchResultDTO> resultDTOS = api.searchFiles("docker");
-        for (SearchResultDTO resultDTO : resultDTOS) {
-            log.log(resultDTO);
+        if (cmd.hasOption("q")) {
+            String[] queryParts = cmd.getOptionValues("q");
+            String query = String.join(" ", queryParts);
+            List<SearchResultDTO> resultDTOS = api.searchFiles(query);
+            for (SearchResultDTO resultDTO : resultDTOS) {
+                log.log(resultDTO);
+            }
         }
     }
 
