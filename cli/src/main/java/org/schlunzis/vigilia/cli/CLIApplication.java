@@ -5,7 +5,9 @@ import org.apache.commons.cli.*;
 import org.schlunzis.vigilia.cli.api.DefaultApi;
 import org.schlunzis.vigilia.cli.model.SearchResultDTO;
 
+import java.nio.file.Path;
 import java.util.List;
+import java.util.stream.Stream;
 
 @CustomLog
 public class CLIApplication {
@@ -15,19 +17,20 @@ public class CLIApplication {
     static {
         OPTIONS.addOption("h", "help", false, "Print this message");
         OPTIONS.addOption("v", "version", false, "Print version information");
+
         OPTIONS.addOption(Option.builder()
                 .option("i")
                 .longOpt("index")
-                .hasArg()
-                .argName("path")
+                .hasArgs()
+                .argName("paths")
                 .desc("Index a file or directory")
                 .build());
         OPTIONS.addOption(Option.builder()
-                .option("s")
-                .longOpt("search")
-                .hasArg()
+                .option("q")
+                .longOpt("query")
+                .hasArgs()
                 .argName("query")
-                .desc("Search indexed files")
+                .desc("Query indexed files")
                 .build());
     }
 
@@ -53,16 +56,26 @@ public class CLIApplication {
             log.log(CLIApplication.class.getPackage().getImplementationVersion());
             return;
         }
-
-
         DefaultApi api = new DefaultApi();
-        api.indexFiles(List.of("path"));
 
-
-        List<SearchResultDTO> resultDTOS = api.searchFiles("docker");
-        for (SearchResultDTO resultDTO : resultDTOS) {
-            log.log(resultDTO);
+        if (cmd.hasOption("i")) {
+            String[] paths = cmd.getOptionValues("i");
+            paths = Stream.of(paths).map(CLIApplication::convertToAbsolutePath).toArray(String[]::new);
+            api.indexFiles(List.of(paths));
         }
+
+        if (cmd.hasOption("q")) {
+            String[] queryParts = cmd.getOptionValues("q");
+            String query = String.join(" ", queryParts);
+            List<SearchResultDTO> resultDTOS = api.searchFiles(query);
+            for (SearchResultDTO resultDTO : resultDTOS) {
+                log.log(resultDTO);
+            }
+        }
+    }
+
+    private static String convertToAbsolutePath(String path) {
+        return Path.of(path).toAbsolutePath().toString();
     }
 
 }
