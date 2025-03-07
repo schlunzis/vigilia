@@ -5,7 +5,9 @@ import org.apache.commons.cli.*;
 import org.schlunzis.vigilia.cli.api.DefaultApi;
 import org.schlunzis.vigilia.cli.model.SearchResultDTO;
 
+import java.nio.file.Path;
 import java.util.List;
+import java.util.stream.Stream;
 
 @CustomLog
 public class CLIApplication {
@@ -58,6 +60,7 @@ public class CLIApplication {
 
         if (cmd.hasOption("i")) {
             String[] paths = cmd.getOptionValues("i");
+            paths = Stream.of(paths).map(CLIApplication::convertToAbsolutePath).toArray(String[]::new);
             api.indexFiles(List.of(paths));
         }
 
@@ -69,6 +72,10 @@ public class CLIApplication {
                 log.log(resultDTO);
             }
         }
+    }
+
+    private static String convertToAbsolutePath(String path) {
+        return Path.of(path).toAbsolutePath().toString();
     }
 
 }
