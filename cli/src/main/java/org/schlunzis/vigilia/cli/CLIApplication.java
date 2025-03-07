@@ -59,7 +59,7 @@ public class CLIApplication {
         api.indexFiles(List.of("test"));
 
 
-        List<SearchResultDTO> resultDTOS = api.searchFiles("test");
+        List<SearchResultDTO> resultDTOS = api.searchFiles("fish");
         for (SearchResultDTO resultDTO : resultDTOS) {
             log.log(resultDTO);
         }

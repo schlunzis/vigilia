@@ -20,7 +20,6 @@ public class EmbeddingsManager {
         log.info("Indexing paths: {}", paths);
 
         // FIXME: read files
-
         db.addAll(model.embed(List.of("Hello World!", "Dolphins are evil")));
     }
 
