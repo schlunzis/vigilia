@@ -1,5 +1,6 @@
 package org.schlunzis.vigilia.gui.fx.lib;
 
+import javafx.geometry.Point2D;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Tab;
@@ -21,9 +22,8 @@ class TabbedStagesManagerImpl<T extends TabType> implements TabbedStagesManager<
 
     @Setter
     private StageFactory stageFactory = new DefaultStageFactory();
-    @Setter
     @Getter
-    private TabFactory<T> tabFactory = new DefaultTabFactory<>();
+    private TabFactory<T> tabFactory;
     @Setter
     @Getter
     private TabContentFactory<T> tabContentFactory = new DefaultTabContentFactory<>();
@@ -33,8 +33,26 @@ class TabbedStagesManagerImpl<T extends TabType> implements TabbedStagesManager<
 
     TabbedStagesManagerImpl(Stage primaryStage) {
         final int stageId = counter.getAndIncrement();
+        setTabFactory(new DefaultTabFactory<>());
         registerStage(primaryStage, stageId);
         setupStage(primaryStage, stageId);
+    }
+
+    public void setTabFactory(TabFactory<T> tabFactory) {
+        this.tabFactory = tabFactory;
+        if (tabFactory instanceof DefaultTabFactory<T> defaultTabFactory) {
+            defaultTabFactory.setTabbedStagesManager(this);
+        }
+    }
+
+    public void tabDraggedOutsideTabPane(Tab tab, Point2D screenCoordinates) {
+        tab.getTabPane().getTabs().remove(tab);
+        Stage newStage = createNewStage();
+        newStage.setX(screenCoordinates.getX());
+        newStage.setY(screenCoordinates.getY());
+        MainController<T> controller = controllers.get(counter.get() - 1);
+        controller.addTab(tab);
+        newStage.show();
     }
 
     @Override
