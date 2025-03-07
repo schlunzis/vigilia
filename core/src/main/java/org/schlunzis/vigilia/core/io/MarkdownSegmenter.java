@@ -20,22 +20,27 @@ final class MarkdownSegmenter implements FileSegmenter {
         StringBuilder sb = new StringBuilder();
         for (String line : lines) {
             if (isHeader(line)) {
-                if (!sb.isEmpty()) {
-                    Metadata metadata = createMetadataForFile(file);
-                    metadata.put(MetadataKeys.HEADER, sb.toString());
-                    result.add(new TextSegment(sb.toString(), metadata));
-                    sb = new StringBuilder();
-                }
-            } else {
-                sb.append(line).append("\n");
+                addSegment(result, sb.toString(), file);
+                sb = new StringBuilder();
             }
+            sb.append(line).append("\n");
         }
+        addSegment(result, sb.toString(), file);
 
         return result;
     }
 
     private boolean isHeader(String line) {
         return line.matches("^#+ .*");
+    }
+
+    private void addSegment(List<TextSegment> result, String text, File file) {
+        if (!text.isBlank()) {
+            text = text.trim();
+            Metadata metadata = createMetadataForFile(file);
+            metadata.put(MetadataKeys.HEADER, text);
+            result.add(new TextSegment(text, metadata));
+        }
     }
 
 }
