@@ -1,6 +1,7 @@
 package org.schlunzis.vigilia.core.embedding;
 
 import dev.langchain4j.data.embedding.Embedding;
+import dev.langchain4j.data.segment.TextSegment;
 import dev.langchain4j.model.embedding.EmbeddingModel;
 import dev.langchain4j.model.embedding.onnx.allminilml6v2.AllMiniLmL6V2EmbeddingModel;
 import dev.langchain4j.store.embedding.CosineSimilarity;
@@ -27,7 +28,7 @@ public class PrepackagedModel implements Model {
         TreeSet<Result> results = new TreeSet<>();
         for (EmbeddingWrapper entry : embeddingWrappers) {
             double similarity = CosineSimilarity.between(queryEmbedding, entry.embedding());
-            results.add(new Result(similarity, entry.fact()));
+            results.add(new Result(similarity, entry.textSegment()));
             if (results.size() > maxResults)
                 results.pollLast();
         }
@@ -40,19 +41,19 @@ public class PrepackagedModel implements Model {
     }
 
     @Override
-    public List<EmbeddingWrapper> embed(List<String> facts) {
+    public List<EmbeddingWrapper> embed(List<TextSegment> textSegments) {
         List<EmbeddingWrapper> embeddingWrappers = new ArrayList<>();
 
-        for (String fact : facts) {
-            Embedding factEmbedding = embeddingModel.embed(fact).content();
-            embeddingWrappers.add(new EmbeddingWrapper(factEmbedding, fact, ""));
+        for (TextSegment textSegment : textSegments) {
+            Embedding factEmbedding = embeddingModel.embed(textSegment).content();
+            embeddingWrappers.add(new EmbeddingWrapper(factEmbedding, textSegment));
         }
         return embeddingWrappers;
     }
 
     @Override
-    public List<Result> embedAndQuery(List<String> facts, String query) {
-        return query(embed(facts), query);
+    public List<Result> embedAndQuery(List<TextSegment> textSegments, String query) {
+        return query(embed(textSegments), query);
     }
 
 }

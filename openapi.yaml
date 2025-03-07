@@ -58,6 +58,8 @@ components:
       properties:
         path:
           type: string
+        text:
+          type: string
         score:
           type: number
           format: double

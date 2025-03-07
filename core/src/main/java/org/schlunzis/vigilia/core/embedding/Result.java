@@ -1,9 +1,11 @@
 package org.schlunzis.vigilia.core.embedding;
 
-public record Result(double score, String fact) implements Comparable<Result> {
+import dev.langchain4j.data.segment.TextSegment;
+
+public record Result(double similarityScore, TextSegment textSegment) implements Comparable<Result> {
 
     @Override
     public int compareTo(Result o) {
-        return Double.compare(o.score(), score);
+        return Double.compare(o.similarityScore(), similarityScore);
     }
 }

@@ -3,6 +3,7 @@ package org.schlunzis.vigilia.core.api;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.schlunzis.vigilia.core.embedding.EmbeddingsManager;
+import org.schlunzis.vigilia.core.embedding.MetadataKeys;
 import org.schlunzis.vigilia.core.embedding.Result;
 import org.schlunzis.vigilia.core.model.SearchResultDTO;
 import org.springframework.http.ResponseEntity;
@@ -26,8 +27,10 @@ public class SearchService implements SearchApiDelegate {
         return ResponseEntity.ok(results
                 .stream()
                 .map(r -> new SearchResultDTO()
-                        .path(r.fact())
-                        .score(r.score()))
+                        .path(r.textSegment().metadata().getString(MetadataKeys.PATH))
+                        .score(r.similarityScore())
+                        .text(r.textSegment().text())
+                )
                 .toList());
     }
 
