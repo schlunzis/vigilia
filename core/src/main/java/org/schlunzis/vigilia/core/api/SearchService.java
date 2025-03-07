@@ -1,6 +1,8 @@
 package org.schlunzis.vigilia.core.api;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.schlunzis.vigilia.core.embedding.EmbeddingsManager;
 import org.schlunzis.vigilia.core.model.SearchResultDTO;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -9,11 +11,15 @@ import java.util.List;
 
 @Slf4j
 @Service
+@RequiredArgsConstructor
 public class SearchService implements SearchApiDelegate {
+
+    private final EmbeddingsManager embeddingsManager;
 
     @Override
     public ResponseEntity<List<SearchResultDTO>> searchFiles(String body) {
         log.info("Searching files: {}", body);
+
 
         SearchResultDTO searchResultDTO = new SearchResultDTO();
         searchResultDTO.setPath("/path/to/file");

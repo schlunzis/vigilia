@@ -17,7 +17,9 @@ paths:
         content:
           text/plain:
             schema:
-              type: string
+              type: array
+              items:
+                type: string
       responses:
         '200':
           description: Indexing successful

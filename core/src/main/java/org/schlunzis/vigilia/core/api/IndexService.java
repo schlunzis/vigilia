@@ -1,16 +1,29 @@
 package org.schlunzis.vigilia.core.api;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.schlunzis.vigilia.core.embedding.EmbeddingsManager;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Slf4j
 @Service
+@RequiredArgsConstructor
 public class IndexService implements IndexApiDelegate {
 
+    private final EmbeddingsManager embeddingsManager;
+
+
     @Override
-    public ResponseEntity<Void> indexFiles(String body) {
-        log.info("Indexing files: {}", body);
+    public ResponseEntity<Void> indexFiles(List<String> paths) {
+
+
+        embeddingsManager.index(paths);
+
+
+        log.info("Indexing files: {}", paths);
         return ResponseEntity.ok().build();
     }
 }

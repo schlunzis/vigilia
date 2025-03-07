@@ -56,6 +56,9 @@ public class CLIApplication {
 
 
         DefaultApi api = new DefaultApi();
+        api.indexFiles(List.of("test"));
+
+
         List<SearchResultDTO> resultDTOS = api.searchFiles("test");
         for (SearchResultDTO resultDTO : resultDTOS) {
             log.log(resultDTO);
