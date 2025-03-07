@@ -23,16 +23,19 @@ public class FilesReader {
             File file = new File(path);
             if (!file.isDirectory()) {
                 result.add(file);
+            } else {
+                result.addAll(readFilesFromPath(path));
             }
         }
         return result;
     }
 
-    // WIP not used
     private List<File> readFilesFromPath(String path) {
         File file = new File(path);
-
         File[] files = file.listFiles();
+        if (files == null)
+            throw new IllegalArgumentException("Path is not a directory: " + path); // should never happen
+
         List<File> result = new ArrayList<>();
         for (File f : files) {
             log.info("Found file: {}", f);
