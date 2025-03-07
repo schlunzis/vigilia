@@ -15,9 +15,11 @@ paths:
       operationId: IndexFiles
       requestBody:
         content:
-          text/plain:
+          application/json:
             schema:
-              type: string
+              type: array
+              items:
+                type: string
       responses:
         '200':
           description: Indexing successful
@@ -56,6 +58,8 @@ components:
       properties:
         path:
           type: string
+        text:
+          type: string
         score:
           type: number
-          format: float
+          format: double

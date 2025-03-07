@@ -56,7 +56,10 @@ public class CLIApplication {
 
 
         DefaultApi api = new DefaultApi();
-        List<SearchResultDTO> resultDTOS = api.searchFiles("test");
+        api.indexFiles(List.of("path"));
+
+
+        List<SearchResultDTO> resultDTOS = api.searchFiles("docker");
         for (SearchResultDTO resultDTO : resultDTOS) {
             log.log(resultDTO);
         }
