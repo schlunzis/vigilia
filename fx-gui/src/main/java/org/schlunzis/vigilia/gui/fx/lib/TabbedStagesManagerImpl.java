@@ -6,11 +6,13 @@ import javafx.scene.Scene;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.stage.Stage;
+import javafx.stage.Window;
 import lombok.Getter;
 import lombok.Setter;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
 
 class TabbedStagesManagerImpl<T extends TabType> implements TabbedStagesManager<T> {
@@ -46,13 +48,42 @@ class TabbedStagesManagerImpl<T extends TabType> implements TabbedStagesManager<
     }
 
     public void tabDraggedOutsideTabPane(Tab tab, Point2D screenCoordinates) {
-        tab.getTabPane().getTabs().remove(tab);
-        Stage newStage = createNewStage();
-        newStage.setX(screenCoordinates.getX());
-        newStage.setY(screenCoordinates.getY());
-        MainController<T> controller = controllers.get(counter.get() - 1);
-        controller.addTab(tab);
-        newStage.show();
+        // if only one tab in the stage, move the stage
+        if (tab.getTabPane().getTabs().size() == 2) { // 2 because of the "+" tab
+            System.out.println("Only one tab in the stage, moving the stage");
+            Window window = tab.getTabPane().getScene().getWindow();
+            window.setX(screenCoordinates.getX());
+            window.setY(screenCoordinates.getY());
+        } else {
+            Optional<MainView> intersectingTabPane = getIntersectingTabPane(screenCoordinates);
+            if (intersectingTabPane.isPresent()) {// if the mouse is over an existing tab header
+                System.out.println("Mouse is over an existing tab header");
+                tab.getTabPane().getSelectionModel().selectPrevious();
+                tab.getTabPane().getTabs().remove(tab);
+                TabPane tabPane = intersectingTabPane.get();
+                tabPane.getTabs().add(tabPane.getTabs().size() - 2, tab);
+            } else { // if the mouse is outside all tab panes, create a new stage
+                System.out.println("Mouse is outside all tab panes");
+                tab.getTabPane().getSelectionModel().selectPrevious();
+                tab.getTabPane().getTabs().remove(tab);
+                Stage newStage = createNewStage();
+                newStage.setX(screenCoordinates.getX());
+                newStage.setY(screenCoordinates.getY());
+                MainController<T> controller = controllers.get(counter.get() - 1);
+                controller.addTab(tab);
+                newStage.show();
+            }
+        }
+
+    }
+
+    private Optional<MainView> getIntersectingTabPane(Point2D screenCoordinates) {
+        return stages.values().stream()
+                .map(Stage::getScene)
+                .map(Scene::getRoot)
+                .map(MainView.class::cast)
+                .filter(tabPane -> tabPane.isHeaderIntersects(screenCoordinates.getX(), screenCoordinates.getY()))
+                .findFirst();
     }
 
     @Override

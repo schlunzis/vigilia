@@ -13,7 +13,6 @@ public class DefaultTabFactory<T extends TabType> implements TabFactory<T> {
     public Tab createTab(T tabType) {
         String name = tabType == null ? "default" : tabType.getTabName();
         DraggableTab tab = new DraggableTab(name);
-        tab.setText(name);
         tab.setOnDraggedOutsideTabPane(point -> tabbedStagesManager.tabDraggedOutsideTabPane(tab, point));
         return tab;
     }

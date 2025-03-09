@@ -4,7 +4,6 @@ import javafx.geometry.Point2D;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.control.Tab;
-import javafx.scene.control.TabPane;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
@@ -34,7 +33,7 @@ public class DraggableTab extends Tab {
 
     public DraggableTab(String name) {
         nameLabel = new Label();
-        nameLabel.setText(name);
+        setActualText(name);
         this.setGraphic(nameLabel);
         nameLabel.setOnMouseDragged(this::startDrag);
         nameLabel.setOnMouseReleased(this::endDrag);
@@ -53,19 +52,23 @@ public class DraggableTab extends Tab {
     private void endDrag(MouseEvent event) {
         System.out.println("endDrag");
         dragStage.close();
-        final double xInNode = event.getSceneX();
-        final double yInNode = event.getSceneY();
-        final double xOnScreen = event.getScreenX();
-        final double yOnScreen = event.getScreenY();
-
-        // check if the mouse is still inside the tab pane
-        TabPane tabPane = getTabPane();
-        if (tabPane.intersects(xInNode, yInNode, 1, 1)) {
+        // check if the mouse is still in the tab header
+        final double xInScene = event.getSceneX();
+        final double yInScene = event.getSceneY();
+        MainView tabPane = (MainView) getTabPane();
+        if (tabPane.isHeaderIntersects(xInScene, yInScene)) {
             return;
         }
 
         // otherwise, notify the listener that the tab was dragged outside the tab pane
+        final double xOnScreen = event.getScreenX();
+        final double yOnScreen = event.getScreenY();
         onDraggedOutsideTabPane.accept(new Point2D(xOnScreen, yOnScreen));
+        event.consume();
+    }
+
+    public void setActualText(String text) {
+        nameLabel.setText(text);
     }
 
 }

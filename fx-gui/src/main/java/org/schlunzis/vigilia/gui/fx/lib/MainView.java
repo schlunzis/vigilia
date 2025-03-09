@@ -1,7 +1,9 @@
 package org.schlunzis.vigilia.gui.fx.lib;
 
+import javafx.geometry.Rectangle2D;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
+import javafx.scene.layout.StackPane;
 import lombok.Setter;
 
 @Setter
@@ -29,6 +31,14 @@ class MainView extends TabPane {
             }
         });
         this.getTabs().add(addTab);
+    }
+
+    public boolean isHeaderIntersects(double x, double y) {
+        double headerHeight = ((StackPane) getSkin().getNode().lookup(".tab-header-area")).getHeight();
+        double screenX = localToScreen(0, 0).getX();
+        double screenY = localToScreen(0, 0).getY();
+        Rectangle2D tabHeader = new Rectangle2D(screenX, screenY, getWidth(), headerHeight);
+        return tabHeader.intersects(x, y, 1, 1);
     }
 
 }
