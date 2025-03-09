@@ -1,5 +1,6 @@
 package org.schlunzis.vigilia.gui.fx.lib;
 
+import javafx.collections.ListChangeListener;
 import javafx.geometry.Point2D;
 import javafx.scene.Node;
 import javafx.scene.Scene;
@@ -48,31 +49,28 @@ class TabbedStagesManagerImpl<T extends TabType> implements TabbedStagesManager<
     }
 
     public void tabDraggedOutsideTabPane(Tab tab, Point2D screenCoordinates) {
-        // if only one tab in the stage, move the stage
-        if (tab.getTabPane().getTabs().size() == 2) { // 2 because of the "+" tab
+        Optional<MainView> intersectingTabPane = getIntersectingTabPane(screenCoordinates);
+        if (intersectingTabPane.isPresent()) {// if the mouse is over an existing tab header
+            System.out.println("Mouse is over an existing tab header");
+            tab.getTabPane().getSelectionModel().selectPrevious();
+            tab.getTabPane().getTabs().remove(tab);
+            TabPane tabPane = intersectingTabPane.get();
+            tabPane.getTabs().add(tabPane.getTabs().size() - 2, tab);
+        } else if (tab.getTabPane().getTabs().size() == 2) { // if only one tab in the stage, move the stage; 2 because of the "+" tab
             System.out.println("Only one tab in the stage, moving the stage");
             Window window = tab.getTabPane().getScene().getWindow();
             window.setX(screenCoordinates.getX());
             window.setY(screenCoordinates.getY());
-        } else {
-            Optional<MainView> intersectingTabPane = getIntersectingTabPane(screenCoordinates);
-            if (intersectingTabPane.isPresent()) {// if the mouse is over an existing tab header
-                System.out.println("Mouse is over an existing tab header");
-                tab.getTabPane().getSelectionModel().selectPrevious();
-                tab.getTabPane().getTabs().remove(tab);
-                TabPane tabPane = intersectingTabPane.get();
-                tabPane.getTabs().add(tabPane.getTabs().size() - 2, tab);
-            } else { // if the mouse is outside all tab panes, create a new stage
-                System.out.println("Mouse is outside all tab panes");
-                tab.getTabPane().getSelectionModel().selectPrevious();
-                tab.getTabPane().getTabs().remove(tab);
-                Stage newStage = createNewStage();
-                newStage.setX(screenCoordinates.getX());
-                newStage.setY(screenCoordinates.getY());
-                MainController<T> controller = controllers.get(counter.get() - 1);
-                controller.addTab(tab);
-                newStage.show();
-            }
+        } else { // if the mouse is outside all tab panes, create a new stage
+            System.out.println("Mouse is outside all tab panes");
+            tab.getTabPane().getSelectionModel().selectPrevious();
+            tab.getTabPane().getTabs().remove(tab);
+            Stage newStage = createNewStage();
+            newStage.setX(screenCoordinates.getX());
+            newStage.setY(screenCoordinates.getY());
+            MainController<T> controller = controllers.get(counter.get() - 1);
+            controller.addTab(tab);
+            newStage.show();
         }
 
     }
@@ -127,6 +125,11 @@ class TabbedStagesManagerImpl<T extends TabType> implements TabbedStagesManager<
 
     private void setupStage(Stage stage, int stageId) {
         MainView mainView = new MainView();
+        mainView.getTabs().addListener((ListChangeListener<? super Tab>) _ -> {
+            if (mainView.getTabs().size() == 1) { // only the "+" tab left
+                stage.close();
+            }
+        });
         controllers.put(stageId, new MainController<>(this, mainView));
         Scene scene = new Scene(mainView);
         stage.setScene(scene);

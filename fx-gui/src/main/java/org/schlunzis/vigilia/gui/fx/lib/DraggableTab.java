@@ -40,7 +40,6 @@ public class DraggableTab extends Tab {
     }
 
     private void startDrag(MouseEvent event) {
-        System.out.println("startDrag");
         dragText.setText(nameLabel.getText());
         dragStage.setWidth(nameLabel.getWidth() + 10);
         dragStage.setHeight(nameLabel.getHeight() + 10);
@@ -50,7 +49,6 @@ public class DraggableTab extends Tab {
     }
 
     private void endDrag(MouseEvent event) {
-        System.out.println("endDrag");
         dragStage.close();
         // check if the mouse is still in the tab header
         final double xInScene = event.getSceneX();

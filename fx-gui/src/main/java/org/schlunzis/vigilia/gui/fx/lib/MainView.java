@@ -26,7 +26,7 @@ class MainView extends TabPane {
         Tab addTab = new Tab("+");
         addTab.setClosable(false);
         this.getSelectionModel().selectedItemProperty().addListener((_, _, selectedTab) -> {
-            if (selectedTab == addTab && onAddTab != null) {
+            if (getTabs().size() > 1 && selectedTab == addTab && onAddTab != null) {
                 onAddTab.run();
             }
         });
