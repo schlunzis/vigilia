@@ -15,15 +15,10 @@ public class IndexService implements IndexApiDelegate {
 
     private final EmbeddingsManager embeddingsManager;
 
-
     @Override
     public ResponseEntity<Void> indexFiles(List<String> paths) {
-
-
-        embeddingsManager.index(paths);
-
-
         log.info("Indexing files: {}", paths);
+        embeddingsManager.index(paths);
         return ResponseEntity.ok().build();
     }
 }
