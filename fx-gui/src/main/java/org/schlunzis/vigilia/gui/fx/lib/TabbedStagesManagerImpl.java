@@ -100,10 +100,10 @@ class TabbedStagesManagerImpl<T extends TabType> implements TabbedStagesManager<
             if (currentTabPane != null) currentTabPane.getTabs().remove(newTab);
         } else {
             newTab = tabFactory.createTab(tabType);
-            Node newTabContent = tabContentFactory.create(tabType);
-            newTab.setContent(newTabContent);
         }
 
+        Node newTabContent = tabContentFactory.create(tabType);
+        newTab.setContent(newTabContent);
         controllerToAddTheTabTo.addTab(newTab);
     }
 

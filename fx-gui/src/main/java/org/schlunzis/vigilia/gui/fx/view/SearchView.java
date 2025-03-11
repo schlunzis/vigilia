@@ -13,6 +13,7 @@ public class SearchView extends Pane {
     private static final AtomicInteger counter = new AtomicInteger(0);
 
     private Runnable onSettingsPressed;
+    private Runnable onIndexPressed;
 
     public SearchView() {
         this.getChildren().add(new Label("TabView " + counter.incrementAndGet()));
@@ -23,6 +24,14 @@ public class SearchView extends Pane {
             }
         });
         this.getChildren().add(settingsButton);
+
+        Button indexButton = new Button("Index");
+        indexButton.setOnAction(_ -> {
+            if (onIndexPressed != null) {
+                onIndexPressed.run();
+            }
+        });
+        this.getChildren().add(indexButton);
     }
 
 }

@@ -7,7 +7,8 @@ import org.schlunzis.vigilia.gui.fx.lib.TabType;
 public enum Type implements TabType {
 
     SEARCH("Search", false),
-    SETTINGS("Settings", true);
+    SETTINGS("Settings", true),
+    INDEX("Index", true);
 
     private final String tabName;
     private final boolean onlyOneInstance;
