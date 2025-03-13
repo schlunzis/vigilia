@@ -28,13 +28,20 @@ public class EmbeddingsManager {
         List<File> failedFiles = new ArrayList<>();
         List<TextSegment> textSegments = filesReader.readTextSegments(files, failedFiles);
         List<EmbeddingWrapper> embeddings = new ArrayList<>(model.embed(textSegments));
-        embeddingsRepository.saveAll(embeddings.stream().map(EmbeddingEntity::fromEmbeddingWrapper).toList());
+        embeddingsRepository.saveAll(
+                embeddings
+                        .stream()
+                        .map(EmbeddingEntity::fromEmbeddingWrapper)
+                        .toList());
     }
 
     public List<Result> query(String query) {
         log.info("Searching for: {}", query);
 
-        List<EmbeddingWrapper> embeddings = embeddingsRepository.findAll().stream().map(EmbeddingEntity::toEmbeddingWrapper).toList();
+        List<EmbeddingWrapper> embeddings = embeddingsRepository.findAll()
+                .stream()
+                .map(EmbeddingEntity::toEmbeddingWrapper)
+                .toList();
         return model.query(embeddings, query);
     }
 
