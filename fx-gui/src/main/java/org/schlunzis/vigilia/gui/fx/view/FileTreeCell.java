@@ -2,12 +2,10 @@ package org.schlunzis.vigilia.gui.fx.view;
 
 import javafx.scene.control.cell.CheckBoxTreeCell;
 
-import java.io.File;
-
-public class FileTreeCell extends CheckBoxTreeCell<File> {
+public class FileTreeCell extends CheckBoxTreeCell<TreeFile> {
 
     @Override
-    public void updateItem(File file, boolean empty) {
+    public void updateItem(TreeFile file, boolean empty) {
         super.updateItem(file, empty);
         if (empty || file == null) {
             setText(null);
