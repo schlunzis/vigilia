@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xmlns="http://maven.apache.org/POM/4.0.0"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
@@ -10,6 +10,7 @@
     </parent>
 
     <artifactId>cli</artifactId>
+    <packaging>jlink</packaging>
 
     <dependencies>
         <!-- JSON processing: jackson -->
@@ -30,14 +31,12 @@
             <artifactId>jackson-datatype-jsr310</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.openapitools</groupId>
+            <groupId>com.github.til7701</groupId>
             <artifactId>jackson-databind-nullable</artifactId>
         </dependency>
-
-        <!-- @Nullable annotation -->
         <dependency>
-            <groupId>com.google.code.findbugs</groupId>
-            <artifactId>jsr305</artifactId>
+            <groupId>jakarta.validation</groupId>
+            <artifactId>jakarta.validation-api</artifactId>
         </dependency>
         <dependency>
             <groupId>jakarta.annotation</groupId>
@@ -94,6 +93,24 @@
                         </configuration>
                     </execution>
                 </executions>
+            </plugin>
+            <plugin>
+                <artifactId>maven-jlink-plugin</artifactId>
+                <version>3.2.0</version>
+                <extensions>true</extensions>
+                <configuration>
+                    <launcher>vig=vigilia.cli/org.schlunzis.vigilia.cli.CLIApplication</launcher>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.panteleyev</groupId>
+                <artifactId>jpackage-maven-plugin</artifactId>
+                <configuration>
+                    <name>Vigilia CLI</name>
+                    <destination>target</destination>
+                    <module>vigilia.cli/org.schlunzis.vigilia.cli.CLIApplication</module>
+                    <runtimeImage>target/maven-jlink/default</runtimeImage>
+                </configuration>
             </plugin>
         </plugins>
     </build>
