@@ -78,7 +78,6 @@
         <dependency>
             <groupId>org.openapitools</groupId>
             <artifactId>jackson-databind-nullable</artifactId>
-            <version>0.2.6</version>
         </dependency>
         <!-- Bean Validation API support -->
         <dependency>
@@ -136,29 +135,14 @@
                     </execution>
                 </executions>
             </plugin>
-
             <plugin>
                 <groupId>org.panteleyev</groupId>
                 <artifactId>jpackage-maven-plugin</artifactId>
-                <version>1.6.3</version>
-                <executions>
-                    <execution>
-                        <id>package</id>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>jpackage</goal>
-                        </goals>
-                    </execution>
-                </executions>
                 <configuration>
                     <name>Vigilia Core</name>
-                    <vendor>schlunzis</vendor>
                     <destination>target</destination>
                     <input>target</input>
                     <mainJar>${project.build.finalName}-exec.jar</mainJar>
-                    <javaOptions>
-                        <option>-Dfile.encoding=UTF-8</option>
-                    </javaOptions>
                 </configuration>
             </plugin>
         </plugins>

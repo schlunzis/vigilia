@@ -37,12 +37,10 @@
         <dependency>
             <groupId>com.github.til7701</groupId>
             <artifactId>jackson-databind-nullable</artifactId>
-            <version>4e036d76323d35a8ae6f113383ae3ab5e126d12f</version>
         </dependency>
         <dependency>
             <groupId>jakarta.validation</groupId>
             <artifactId>jakarta.validation-api</artifactId>
-            <version>3.1.1</version>
         </dependency>
         <dependency>
             <groupId>jakarta.annotation</groupId>
@@ -115,25 +113,11 @@
             <plugin>
                 <groupId>org.panteleyev</groupId>
                 <artifactId>jpackage-maven-plugin</artifactId>
-                <version>1.6.3</version>
-                <executions>
-                    <execution>
-                        <id>package</id>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>jpackage</goal>
-                        </goals>
-                    </execution>
-                </executions>
                 <configuration>
                     <name>Vigilia</name>
-                    <vendor>schlunzis</vendor>
                     <destination>target</destination>
                     <module>vigilia.gui.fx/org.schlunzis.vigilia.gui.fx.VigiliaApplication</module>
                     <runtimeImage>target/image</runtimeImage>
-                    <javaOptions>
-                        <option>-Dfile.encoding=UTF-8</option>
-                    </javaOptions>
                 </configuration>
             </plugin>
         </plugins>
