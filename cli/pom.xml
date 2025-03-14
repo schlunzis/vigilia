@@ -104,6 +104,30 @@
                     <launcher>vig=vigilia.cli/org.schlunzis.vigilia.cli.CLIApplication</launcher>
                 </configuration>
             </plugin>
+            <plugin>
+                <groupId>org.panteleyev</groupId>
+                <artifactId>jpackage-maven-plugin</artifactId>
+                <version>1.6.3</version>
+                <executions>
+                    <execution>
+                        <id>package</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>jpackage</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <name>Vigilia CLI</name>
+                    <vendor>schlunzis</vendor>
+                    <destination>target</destination>
+                    <module>vigilia.cli/org.schlunzis.vigilia.cli.CLIApplication</module>
+                    <runtimeImage>target/maven-jlink/default</runtimeImage>
+                    <javaOptions>
+                        <option>-Dfile.encoding=UTF-8</option>
+                    </javaOptions>
+                </configuration>
+            </plugin>
         </plugins>
     </build>
 

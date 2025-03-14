@@ -121,6 +121,46 @@
                     </execution>
                 </executions>
             </plugin>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <version>${spring.boot.version}</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>repackage</goal>
+                        </goals>
+                        <configuration>
+                            <classifier>exec</classifier>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.panteleyev</groupId>
+                <artifactId>jpackage-maven-plugin</artifactId>
+                <version>1.6.3</version>
+                <executions>
+                    <execution>
+                        <id>package</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>jpackage</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <name>Vigilia Core</name>
+                    <vendor>schlunzis</vendor>
+                    <destination>target</destination>
+                    <input>target</input>
+                    <mainJar>${project.build.finalName}-exec.jar</mainJar>
+                    <javaOptions>
+                        <option>-Dfile.encoding=UTF-8</option>
+                    </javaOptions>
+                </configuration>
+            </plugin>
         </plugins>
     </build>
 

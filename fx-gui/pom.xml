@@ -112,6 +112,30 @@
                     <launcher>vigilia</launcher>
                 </configuration>
             </plugin>
+            <plugin>
+                <groupId>org.panteleyev</groupId>
+                <artifactId>jpackage-maven-plugin</artifactId>
+                <version>1.6.3</version>
+                <executions>
+                    <execution>
+                        <id>package</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>jpackage</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <name>Vigilia</name>
+                    <vendor>schlunzis</vendor>
+                    <destination>target</destination>
+                    <module>vigilia.gui.fx/org.schlunzis.vigilia.gui.fx.VigiliaApplication</module>
+                    <runtimeImage>target/image</runtimeImage>
+                    <javaOptions>
+                        <option>-Dfile.encoding=UTF-8</option>
+                    </javaOptions>
+                </configuration>
+            </plugin>
         </plugins>
     </build>
 
