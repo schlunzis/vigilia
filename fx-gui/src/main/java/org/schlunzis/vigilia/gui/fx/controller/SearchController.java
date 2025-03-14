@@ -19,10 +19,15 @@ public class SearchController {
         this.view = view;
         this.tabbedStagesManager = tabbedStagesManager;
         view.setOnSettingsPressed(this::onOpenSettingsButtonPressed);
+        view.setOnIndexPressed(this::onOpenIndexButtonPressed);
     }
 
     public void onOpenSettingsButtonPressed() {
         tabbedStagesManager.addTab(Type.SETTINGS);
+    }
+
+    public void onOpenIndexButtonPressed() {
+        tabbedStagesManager.addTab(Type.INDEX);
     }
 
 }

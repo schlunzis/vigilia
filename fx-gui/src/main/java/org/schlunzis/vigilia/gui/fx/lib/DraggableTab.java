@@ -50,6 +50,8 @@ public class DraggableTab extends Tab {
 
     private void endDrag(MouseEvent event) {
         dragStage.close();
+        if (event.isStillSincePress()) return;
+
         // check if the mouse is still in the tab header
         final double xInScene = event.getSceneX();
         final double yInScene = event.getSceneY();
