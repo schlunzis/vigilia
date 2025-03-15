@@ -5,6 +5,7 @@ import dev.langchain4j.data.embedding.Embedding;
 import dev.langchain4j.data.segment.TextSegment;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.schlunzis.vigilia.core.embedding.EmbeddingWrapper;
 
@@ -16,6 +17,7 @@ import java.util.UUID;
  * Since {@link org.schlunzis.vigilia.core.embedding.EmbeddingWrapper} holds fields that are not directly supported by JPA (aka Objects that are not annotated with
  * {@link jakarta.persistence.Entity}), we need to convert it to a JPA entity.
  */
+@Data
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
@@ -28,8 +30,10 @@ public class EmbeddingEntity {
     @ElementCollection
     private List<Float> vector;
 
+    @Lob
     private String text;
 
+    @Column(length = 10000)
     @Convert(converter = MetadataConverter.class)
     private Map<String, Object> metadata;
 

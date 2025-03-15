@@ -8,4 +8,6 @@ import java.util.UUID;
 @Repository
 public interface EmbeddingsRepository extends JpaRepository<EmbeddingEntity, UUID> {
 
+    // FIXME: write query to get all metadata from the database
+    // List<Map<String, Object>> findAllMetadata();
 }
