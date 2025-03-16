@@ -11,7 +11,6 @@ import org.springframework.stereotype.Component;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 @Slf4j
 @Component
@@ -26,24 +25,6 @@ public class EmbeddingsManager {
         log.info("Indexing paths: {}", paths);
 
         List<File> files = filesReader.readFilesFromPaths(paths);
-        log.info("Filtering files to embed.");
-        log.debug("Files before filtering: {}", files.size());
-        // extract metadata from embeddings
-        List<Map<String, Object>> embeddedMetadata = embeddingsRepository
-                .findAll()
-                .stream()
-                .map(EmbeddingEntity::getMetadata)
-                .toList();
-        // filter files to only index new or modified files
-        files = files
-                .stream()
-                .filter(f -> embeddedMetadata
-                        .stream()
-                        .noneMatch(m -> m.get(MetadataKeys.PATH).equals(f.getAbsolutePath()) &&
-                                (Long) (m.get(MetadataKeys.LAST_MODIFIED)) == f.lastModified()))
-                .toList();
-        log.debug("Files after filtering: {}", files.size());
-
 
         List<File> failedFiles = new ArrayList<>();
         List<TextSegment> textSegments = filesReader.readTextSegments(files, failedFiles);
