@@ -21,6 +21,7 @@ import java.util.UUID;
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
+@Table(name = "EmbeddingEntity")
 public class EmbeddingEntity {
 
     @Id

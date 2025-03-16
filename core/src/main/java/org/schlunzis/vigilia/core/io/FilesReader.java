@@ -4,7 +4,6 @@ import dev.langchain4j.data.segment.TextSegment;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.schlunzis.vigilia.core.embedding.MetadataKeys;
-import org.schlunzis.vigilia.core.model.EmbeddingEntity;
 import org.schlunzis.vigilia.core.model.EmbeddingsRepository;
 import org.springframework.stereotype.Component;
 
@@ -26,10 +25,7 @@ public class FilesReader {
         log.info("Reading files from paths: {}", paths);
 
         List<Map<String, Object>> embeddedMetadata = embeddingsRepository
-                .findAll()
-                .stream()
-                .map(EmbeddingEntity::getMetadata)
-                .toList();
+                .findAllMetadata();
 
         List<File> result = new ArrayList<>();
         for (String path : paths) {
