@@ -15,6 +15,7 @@ sealed interface FileSegmenter permits MarkdownSegmenter {
     default Metadata createMetadataForFile(File file) {
         Metadata metadata = new Metadata();
         metadata.put(MetadataKeys.PATH, file.getAbsolutePath());
+        metadata.put(MetadataKeys.LAST_MODIFIED, file.lastModified());
         return metadata;
     }
 
