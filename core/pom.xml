@@ -115,6 +115,7 @@
                                 <configPackage>org.schlunzis.vigilia.core.config</configPackage>
                                 <useSpringBoot3>true</useSpringBoot3>
                                 <delegatePattern>true</delegatePattern>
+                                <useOptional>true</useOptional>
                             </configOptions>
                         </configuration>
                     </execution>

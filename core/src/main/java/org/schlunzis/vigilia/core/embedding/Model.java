@@ -3,19 +3,15 @@ package org.schlunzis.vigilia.core.embedding;
 import dev.langchain4j.data.segment.TextSegment;
 
 import java.util.List;
+import java.util.SortedSet;
 
 public interface Model {
 
 
-    List<Result> query(List<EmbeddingWrapper> embeddingWrappers, String query, int maxResults);
-
-    /**
-     * query with default maxResults = 10
-     */
-    List<Result> query(List<EmbeddingWrapper> embeddingWrappers, String query);
+    SortedSet<Result> query(List<EmbeddingWrapper> embeddingWrappers, String query);
 
     List<EmbeddingWrapper> embed(List<TextSegment> textSegments);
 
-    List<Result> embedAndQuery(List<TextSegment> textSegments, String query);
+    SortedSet<Result> embedAndQuery(List<TextSegment> textSegments, String query);
 
 }
