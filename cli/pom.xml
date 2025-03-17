@@ -100,6 +100,9 @@
                 <extensions>true</extensions>
                 <configuration>
                     <launcher>vig=vigilia.cli/org.schlunzis.vigilia.cli.CLIApplication</launcher>
+                    <noHeaderFiles>true</noHeaderFiles>
+                    <noManPages>true</noManPages>
+                    <stripDebug>true</stripDebug>
                 </configuration>
             </plugin>
             <plugin>
@@ -115,4 +118,47 @@
         </plugins>
     </build>
 
+    <profiles>
+        <profile>
+            <id>linux-deb</id>
+            <activation>
+                <os>
+                    <family>unix</family>
+                </os>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.panteleyev</groupId>
+                        <artifactId>jpackage-maven-plugin</artifactId>
+                        <configuration>
+                            <type>deb</type>
+                            <linuxPackageName>vig</linuxPackageName>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
+            <id>windows-msi</id>
+            <activation>
+                <os>
+                    <family>windows</family>
+                </os>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.panteleyev</groupId>
+                        <artifactId>jpackage-maven-plugin</artifactId>
+                        <configuration>
+                            <type>msi</type>
+                            <winUpgradeUuid>68d1e759-99ff-454a-b2c2-5742cd2b3980</winUpgradeUuid>
+                            <winPerUserInstall>true</winPerUserInstall>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 </project>
