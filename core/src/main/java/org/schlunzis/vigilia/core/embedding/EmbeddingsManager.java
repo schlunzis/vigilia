@@ -11,6 +11,7 @@ import org.springframework.stereotype.Component;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 @Slf4j
 @Component
@@ -25,6 +26,8 @@ public class EmbeddingsManager {
         log.info("Indexing paths: {}", paths);
 
         List<File> files = filesReader.readFilesFromPaths(paths);
+
+        files = filterFiles(files);
 
         List<File> failedFiles = new ArrayList<>();
         List<TextSegment> textSegments = filesReader.readTextSegments(files, failedFiles);
@@ -46,5 +49,23 @@ public class EmbeddingsManager {
         return model.query(embeddings, query);
     }
 
+    private List<File> filterFiles(List<File> files) {
+        log.debug("Files before filtering: {}", files.size());
+        List<Map<String, Object>> embeddedMetadata = embeddingsRepository.findAllMetadata();
+        // filter files to only index new or modified files
+        files = files
+                .stream()
+                .filter(f -> needsIndexing(f, embeddedMetadata))
+                .toList();
+        log.debug("Files after filtering: {}", files.size());
+        return files;
+    }
+
+    private boolean needsIndexing(File f, List<Map<String, Object>> metadata) {
+        return metadata
+                .stream()
+                .noneMatch(m -> m.get(MetadataKeys.PATH).equals(f.getAbsolutePath()) &&
+                        (Long) (m.get(MetadataKeys.LAST_MODIFIED)) == f.lastModified());
+    }
 
 }

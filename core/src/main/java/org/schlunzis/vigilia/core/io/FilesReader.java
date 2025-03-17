@@ -1,43 +1,30 @@
 package org.schlunzis.vigilia.core.io;
 
 import dev.langchain4j.data.segment.TextSegment;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.schlunzis.vigilia.core.embedding.MetadataKeys;
-import org.schlunzis.vigilia.core.model.EmbeddingsRepository;
 import org.springframework.stereotype.Component;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 @Slf4j
 @Component
-@RequiredArgsConstructor
 public class FilesReader {
-
-    private final EmbeddingsRepository embeddingsRepository;
 
     public List<File> readFilesFromPaths(List<String> paths) {
         log.info("Reading files from paths: {}", paths);
-
-        List<Map<String, Object>> embeddedMetadata = embeddingsRepository
-                .findAllMetadata();
 
         List<File> result = new ArrayList<>();
         for (String path : paths) {
             log.info("Reading files from path: {}", path);
             File file = new File(path);
-            if (!file.isDirectory() && needsIndexing(file, embeddedMetadata)) {
+            if (!file.isDirectory()) {
                 result.add(file);
             } else {
-                result.addAll(readFilesFromPath(path)
-                        .stream()
-                        .filter(f -> needsIndexing(f, embeddedMetadata))
-                        .toList());
+                result.addAll(readFilesFromPath(path));
             }
         }
         return result;
@@ -91,11 +78,5 @@ public class FilesReader {
         }
     }
 
-    private boolean needsIndexing(File f, List<Map<String, Object>> metadata) {
-        return metadata
-                .stream()
-                .noneMatch(m -> m.get(MetadataKeys.PATH).equals(f.getAbsolutePath()) &&
-                        (Long) (m.get(MetadataKeys.LAST_MODIFIED)) == f.lastModified());
-    }
 
 }

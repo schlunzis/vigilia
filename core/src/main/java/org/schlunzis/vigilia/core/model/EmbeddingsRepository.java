@@ -13,4 +13,5 @@ public interface EmbeddingsRepository extends JpaRepository<EmbeddingEntity, UUI
 
     @Query("SELECT metadata FROM EmbeddingEntity")
     List<Map<String, Object>> findAllMetadata();
+
 }
