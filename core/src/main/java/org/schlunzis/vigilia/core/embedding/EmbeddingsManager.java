@@ -34,6 +34,7 @@ public class EmbeddingsManager {
                         .stream()
                         .map(EmbeddingEntity::fromEmbeddingWrapper)
                         .toList());
+        queryCache.clear();
     }
 
     public List<Result> query(String query, int pageNumber, int pageSize) {
