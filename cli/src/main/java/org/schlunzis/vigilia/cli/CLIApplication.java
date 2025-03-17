@@ -67,7 +67,7 @@ public class CLIApplication {
         if (cmd.hasOption("q")) {
             String[] queryParts = cmd.getOptionValues("q");
             String query = String.join(" ", queryParts);
-            List<SearchResultDTO> resultDTOS = api.searchFiles(query);
+            List<SearchResultDTO> resultDTOS = api.searchFiles(query, null, null);
             for (SearchResultDTO resultDTO : resultDTOS) {
                 log.log(resultDTO);
             }
