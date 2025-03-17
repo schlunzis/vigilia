@@ -2,7 +2,6 @@ package org.schlunzis.vigilia.core.io;
 
 import dev.langchain4j.data.document.Metadata;
 import dev.langchain4j.data.segment.TextSegment;
-import org.schlunzis.vigilia.core.embedding.MetadataKeys;
 
 import java.io.File;
 import java.io.IOException;
@@ -38,7 +37,6 @@ final class MarkdownSegmenter implements FileSegmenter {
         if (!text.isBlank()) {
             text = text.trim();
             Metadata metadata = createMetadataForFile(file);
-            metadata.put(MetadataKeys.HEADER, text);
             result.add(new TextSegment(text, metadata));
         }
     }
