@@ -109,7 +109,7 @@
                 <groupId>org.panteleyev</groupId>
                 <artifactId>jpackage-maven-plugin</artifactId>
                 <configuration>
-                    <name>Vigilia CLI</name>
+                    <name>Vigilia-CLI</name>
                     <destination>target</destination>
                     <module>vigilia.cli/org.schlunzis.vigilia.cli.CLIApplication</module>
                     <runtimeImage>target/maven-jlink/default</runtimeImage>
@@ -132,7 +132,7 @@
                         <groupId>org.panteleyev</groupId>
                         <artifactId>jpackage-maven-plugin</artifactId>
                         <configuration>
-                            <type>deb</type>
+                            <type>DEB</type>
                             <linuxPackageName>vig</linuxPackageName>
                         </configuration>
                     </plugin>
@@ -152,7 +152,7 @@
                         <groupId>org.panteleyev</groupId>
                         <artifactId>jpackage-maven-plugin</artifactId>
                         <configuration>
-                            <type>msi</type>
+                            <type>MSI</type>
                             <winUpgradeUuid>68d1e759-99ff-454a-b2c2-5742cd2b3980</winUpgradeUuid>
                             <winPerUserInstall>true</winPerUserInstall>
                         </configuration>

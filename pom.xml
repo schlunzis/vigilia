@@ -121,6 +121,17 @@
                         </execution>
                     </executions>
                 </plugin>
+                <plugin>
+                    <groupId>org.panteleyev</groupId>
+                    <artifactId>jpackage-maven-plugin</artifactId>
+                    <version>1.6.3</version>
+                    <configuration>
+                        <vendor>schlunzis</vendor>
+                        <javaOptions>
+                            <option>-Dfile.encoding=UTF-8</option>
+                        </javaOptions>
+                    </configuration>
+                </plugin>
             </plugins>
         </pluginManagement>
 
@@ -166,17 +177,6 @@
                             <addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
                         </manifest>
                     </archive>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.panteleyev</groupId>
-                <artifactId>jpackage-maven-plugin</artifactId>
-                <version>1.6.3</version>
-                <configuration>
-                    <vendor>schlunzis</vendor>
-                    <javaOptions>
-                        <option>-Dfile.encoding=UTF-8</option>
-                    </javaOptions>
                 </configuration>
             </plugin>
         </plugins>
