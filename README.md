@@ -13,11 +13,8 @@ To build the project, you need the following:
 Then run the following command:
 
 ```bash
-./mvnw package jpackage:jpackage
-```
-
-if you don't need the installer, you can run:
-
-```bash
 ./mvnw package
+./mvnw jpackage:jpackage -pl core,cli,fx-gui
 ```
+
+if you don't need the installer, you can leave out the second command.
