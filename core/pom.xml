@@ -107,7 +107,7 @@
                         <configuration>
                             <generatorName>spring</generatorName>
                             <apiPackage>org.schlunzis.vigilia.core.api</apiPackage>
-                            <modelPackage>org.schlunzis.vigilia.core.model</modelPackage>
+                            <modelPackage>org.schlunzis.vigilia.core.dto</modelPackage>
                             <supportingFilesToGenerate>
                                 SpringDocConfiguration.java,ApiUtil.java
                             </supportingFilesToGenerate>

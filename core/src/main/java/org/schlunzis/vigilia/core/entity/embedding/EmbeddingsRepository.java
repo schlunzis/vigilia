@@ -1,4 +1,4 @@
-package org.schlunzis.vigilia.core.model;
+package org.schlunzis.vigilia.core.entity.embedding;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;

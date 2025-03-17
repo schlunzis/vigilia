@@ -3,6 +3,8 @@ package org.schlunzis.vigilia.cli;
 import lombok.CustomLog;
 import org.apache.commons.cli.*;
 import org.schlunzis.vigilia.cli.api.DefaultApi;
+import org.schlunzis.vigilia.cli.model.AddModelRequestDTO;
+import org.schlunzis.vigilia.cli.model.ModelDTO;
 import org.schlunzis.vigilia.cli.model.SearchResultDTO;
 
 import java.nio.file.Path;
@@ -32,6 +34,13 @@ public class CLIApplication {
                 .argName("query")
                 .desc("Query indexed files")
                 .build());
+        OPTIONS.addOption(Option.builder()
+                .option("m")
+                .longOpt("model")
+                .hasArgs()
+                .argName("paths")
+                .desc("Add a new model to the server. Usage: -m <name> <model_path> <tokenizer_path>")
+                .build());
     }
 
     public static void main(String[] args) throws ApiException {
@@ -57,6 +66,17 @@ public class CLIApplication {
             return;
         }
         DefaultApi api = new DefaultApi();
+
+        if (cmd.hasOption("m")) {
+            String[] modelParts = cmd.getOptionValues("m");
+            String name = modelParts[0];
+            String modelPath = modelParts[1];
+            String tokenizerPath = modelParts[2];
+            log.log("Adding model: {0} {1} {2}", name, modelPath, tokenizerPath);
+            ModelDTO model = new ModelDTO().name(name).modelPath(modelPath).tokenizerPath(tokenizerPath);
+            AddModelRequestDTO addModelRequestDTO = new AddModelRequestDTO().model(model).reindex(false);
+            api.addModel(addModelRequestDTO);
+        }
 
         if (cmd.hasOption("i")) {
             String[] paths = cmd.getOptionValues("i");

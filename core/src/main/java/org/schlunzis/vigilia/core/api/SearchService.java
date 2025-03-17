@@ -2,10 +2,10 @@ package org.schlunzis.vigilia.core.api;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.schlunzis.vigilia.core.dto.SearchResultDTO;
 import org.schlunzis.vigilia.core.embedding.EmbeddingsManager;
 import org.schlunzis.vigilia.core.embedding.MetadataKeys;
 import org.schlunzis.vigilia.core.embedding.Result;
-import org.schlunzis.vigilia.core.model.SearchResultDTO;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
