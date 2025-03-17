@@ -114,7 +114,7 @@
                 <groupId>org.panteleyev</groupId>
                 <artifactId>jpackage-maven-plugin</artifactId>
                 <configuration>
-                    <name>Vigilia</name>
+                    <name>Vigilia-GUI</name>
                     <destination>target</destination>
                     <module>vigilia.gui.fx/org.schlunzis.vigilia.gui.fx.VigiliaApplication</module>
                     <runtimeImage>target/image</runtimeImage>
@@ -122,5 +122,50 @@
             </plugin>
         </plugins>
     </build>
+
+    <profiles>
+        <profile>
+            <id>linux-deb</id>
+            <activation>
+                <os>
+                    <family>unix</family>
+                </os>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.panteleyev</groupId>
+                        <artifactId>jpackage-maven-plugin</artifactId>
+                        <configuration>
+                            <type>DEB</type>
+                            <linuxPackageName>vig-gui</linuxPackageName>
+                            <linuxShortcut>true</linuxShortcut>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
+            <id>windows-msi</id>
+            <activation>
+                <os>
+                    <family>windows</family>
+                </os>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.panteleyev</groupId>
+                        <artifactId>jpackage-maven-plugin</artifactId>
+                        <configuration>
+                            <type>MSI</type>
+                            <winUpgradeUuid>0a2a6b5e-6b10-4c21-8e51-22c13e28eb62</winUpgradeUuid>
+                            <winPerUserInstall>true</winPerUserInstall>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 
 </project>

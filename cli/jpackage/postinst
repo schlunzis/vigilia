@@ -1,0 +1,11 @@
+#!/bin/sh
+
+set -e
+
+echo "Running postinst for vig cli with $1"
+if  [ "$1" = configure ]; then
+  # creating a link, so the application can be called from the command line
+  ln -sf /opt/vig/bin/Vigilia-CLI /bin/vig
+fi
+
+exit 0

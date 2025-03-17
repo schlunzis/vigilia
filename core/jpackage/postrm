@@ -1,0 +1,13 @@
+#!/bin/sh
+
+set -e
+
+echo "Running postrm for vig core with $1"
+if [ "$1" = 'remove' ]; then
+  # remove the installation folder
+  rm -rf /opt/vig-core/
+  # remove the link in /bin
+  rm -f /bin/vig-core
+fi
+
+exit 0
