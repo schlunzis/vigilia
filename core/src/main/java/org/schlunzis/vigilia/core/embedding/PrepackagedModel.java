@@ -10,6 +10,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.SortedSet;
 import java.util.TreeSet;
 
 @Slf4j
@@ -19,25 +20,18 @@ public class PrepackagedModel implements Model {
     private final EmbeddingModel embeddingModel = new AllMiniLmL6V2EmbeddingModel();
 
     @Override
-    public List<Result> query(List<EmbeddingWrapper> embeddingWrappers, String query, int maxResults) {
+    public SortedSet<Result> query(List<EmbeddingWrapper> embeddingWrappers, String query) {
         log.debug("Embedding query");
         Embedding queryEmbedding = embeddingModel.embed(query).content();
 
         log.debug("Calculating similarity");
 
-        TreeSet<Result> results = new TreeSet<>();
+        SortedSet<Result> results = new TreeSet<>();
         for (EmbeddingWrapper entry : embeddingWrappers) {
             double similarity = CosineSimilarity.between(queryEmbedding, entry.embedding());
             results.add(new Result(similarity, entry.textSegment()));
-            if (results.size() > maxResults)
-                results.pollLast();
         }
-        return List.copyOf(results);
-    }
-
-    @Override
-    public List<Result> query(List<EmbeddingWrapper> embeddingWrappers, String query) {
-        return query(embeddingWrappers, query, 10);
+        return results;
     }
 
     @Override
@@ -52,7 +46,7 @@ public class PrepackagedModel implements Model {
     }
 
     @Override
-    public List<Result> embedAndQuery(List<TextSegment> textSegments, String query) {
+    public SortedSet<Result> embedAndQuery(List<TextSegment> textSegments, String query) {
         return query(embed(textSegments), query);
     }
 

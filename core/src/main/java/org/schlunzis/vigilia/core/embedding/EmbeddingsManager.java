@@ -9,8 +9,7 @@ import org.schlunzis.vigilia.core.model.EmbeddingsRepository;
 import org.springframework.stereotype.Component;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 @Slf4j
 @Component
@@ -20,6 +19,8 @@ public class EmbeddingsManager {
     private final Model model;
     private final FilesReader filesReader;
     private final EmbeddingsRepository embeddingsRepository;
+
+    Map<String, SortedSet<Result>> queryCache = new HashMap<>();
 
     public void index(List<String> paths) {
         log.info("Indexing paths: {}", paths);
@@ -33,16 +34,24 @@ public class EmbeddingsManager {
                         .stream()
                         .map(EmbeddingEntity::fromEmbeddingWrapper)
                         .toList());
+        queryCache.clear();
     }
 
-    public List<Result> query(String query) {
+    public List<Result> query(String query, int pageNumber, int pageSize) {
         log.info("Searching for: {}", query);
 
-        List<EmbeddingWrapper> embeddings = embeddingsRepository.findAll()
-                .stream()
-                .map(EmbeddingEntity::toEmbeddingWrapper)
+        SortedSet<Result> results = queryCache.computeIfAbsent(query, _ ->
+                model.query(embeddingsRepository.findAll()
+                                .stream()
+                                .map(EmbeddingEntity::toEmbeddingWrapper)
+                                .toList(),
+                        query)
+        );
+
+        return results.stream()
+                .skip((long) pageNumber * pageSize)
+                .limit(pageSize)
                 .toList();
-        return model.query(embeddings, query);
     }
 
 
