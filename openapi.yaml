@@ -89,7 +89,7 @@ paths:
                   type: boolean
                   default: false
       responses:
-        '200':
+        '201':
           description: Registration successful
         '400':
           description: Bad request

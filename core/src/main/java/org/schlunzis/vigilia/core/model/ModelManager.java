@@ -7,6 +7,7 @@ import org.schlunzis.vigilia.core.entity.model.ModelEntity;
 import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Slf4j
@@ -33,9 +34,18 @@ public class ModelManager {
         return new OnnxModel(modelEntity.getModelPath(), modelEntity.getTokenizerPath(), PoolingMode.MEAN);
     }
 
+    public List<ModelEntity> getAllModels() {
+        return modelRepository.findAll();
+    }
+
 
     public boolean addModel(String name, String modelPath, String tokenizerPath) {
         modelRepository.save(new ModelEntity(name, modelPath, tokenizerPath));
-        return false;
+        return true;
+    }
+
+    public boolean removeModel(String name) {
+        modelRepository.deleteById(name);
+        return true;
     }
 }
