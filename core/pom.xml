@@ -143,6 +143,7 @@
                     <destination>target</destination>
                     <input>target</input>
                     <mainJar>${project.build.finalName}-exec.jar</mainJar>
+                    <launcherAsService>true</launcherAsService>
                 </configuration>
             </plugin>
         </plugins>

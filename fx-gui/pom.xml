@@ -118,6 +118,7 @@
                     <destination>target</destination>
                     <module>vigilia.gui.fx/org.schlunzis.vigilia.gui.fx.VigiliaApplication</module>
                     <runtimeImage>target/image</runtimeImage>
+                    <resourceDir>jpackage</resourceDir>
                 </configuration>
             </plugin>
         </plugins>

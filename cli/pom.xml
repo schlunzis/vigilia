@@ -113,6 +113,7 @@
                     <destination>target</destination>
                     <module>vigilia.cli/org.schlunzis.vigilia.cli.CLIApplication</module>
                     <runtimeImage>target/maven-jlink/default</runtimeImage>
+                    <resourceDir>jpackage</resourceDir>
                 </configuration>
             </plugin>
         </plugins>

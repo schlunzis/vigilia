@@ -127,7 +127,6 @@
                     <version>1.6.3</version>
                     <configuration>
                         <vendor>schlunzis</vendor>
-                        <resourceDir>jpackage</resourceDir>
                         <javaOptions>
                             <option>-Dfile.encoding=UTF-8</option>
                         </javaOptions>
