@@ -1,0 +1,13 @@
+#!/bin/sh
+
+set -e
+
+echo "Running postinst for vig fx with $1"
+if  [ "$1" = configure ]; then
+  # creating a desktop item
+  xdg-desktop-menu install /opt/vig-gui/lib/vig-gui-Vigilia-GUI.desktop
+  # creating a link, so the application can be called from the command line
+  ln -sf /opt/vig-gui/bin/Vigilia-GUI /bin/vig-gui
+fi
+
+exit 0

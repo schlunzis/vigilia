@@ -8,7 +8,7 @@ import org.schlunzis.vigilia.gui.fx.tab.VTabContentFactory;
 
 public class VigiliaApplication extends Application {
 
-    public static void main(String[] args) throws ApiException {
+    public static void main(String[] args) {
         launch(args);
     }
 
