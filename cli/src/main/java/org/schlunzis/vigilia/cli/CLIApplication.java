@@ -3,7 +3,6 @@ package org.schlunzis.vigilia.cli;
 import lombok.CustomLog;
 import org.apache.commons.cli.*;
 import org.schlunzis.vigilia.cli.api.DefaultApi;
-import org.schlunzis.vigilia.cli.model.DatabaseConfigDTO;
 import org.schlunzis.vigilia.cli.model.SearchResultDTO;
 import org.schlunzis.vigilia.cli.ui.ResultsPresenter;
 
@@ -34,13 +33,6 @@ public class CLIApplication {
                 .argName("query")
                 .desc("Query indexed files")
                 .build());
-        OPTIONS.addOption(Option.builder()
-                .option("d")
-                .longOpt("database")
-                .hasArgs()
-                .argName("config")
-                .desc("Database configuration <url> <username> <password>")
-                .build());
     }
 
     public static void main(String[] args) throws ApiException {
@@ -68,20 +60,6 @@ public class CLIApplication {
 
 
         DefaultApi api = new DefaultApi();
-
-
-        if (cmd.hasOption("d")) {
-            String[] configParts = cmd.getOptionValues("d");
-            if (configParts.length != 3) {
-                log.log("Database configuration requires 3 arguments: <url> <username> <password>");
-                System.exit(1);
-            }
-            String url = configParts[0];
-            String username = configParts[1];
-            String password = configParts[2];
-            DatabaseConfigDTO databaseConfigDTO = new DatabaseConfigDTO().url(url).username(username).password(password);
-            api.updateDatabaseConfig(databaseConfigDTO);
-        }
 
         if (cmd.hasOption("i")) {
             String[] paths = cmd.getOptionValues("i");
