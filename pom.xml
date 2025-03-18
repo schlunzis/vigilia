@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xmlns="http://maven.apache.org/POM/4.0.0"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
@@ -20,7 +20,15 @@
         <lombok.version>1.18.36</lombok.version>
         <jackson.version>2.18.3</jackson.version>
         <jakarta-annotation-version>2.1.1</jakarta-annotation-version>
+        <jakarta-validation-version>3.1.1</jakarta-validation-version>
     </properties>
+
+    <repositories>
+        <repository>
+            <id>jitpack.io</id>
+            <url>https://jitpack.io</url>
+        </repository>
+    </repositories>
 
     <dependencyManagement>
         <dependencies>
@@ -55,14 +63,24 @@
                 <version>${jackson.version}</version>
             </dependency>
             <dependency>
+                <groupId>jakarta.annotation</groupId>
+                <artifactId>jakarta.annotation-api</artifactId>
+                <version>${jakarta-annotation-version}</version>
+            </dependency>
+            <dependency>
+                <groupId>jakarta.validation</groupId>
+                <artifactId>jakarta.validation-api</artifactId>
+                <version>${jakarta-validation-version}</version>
+            </dependency>
+            <dependency>
                 <groupId>org.openapitools</groupId>
                 <artifactId>jackson-databind-nullable</artifactId>
                 <version>0.2.6</version>
             </dependency>
             <dependency>
-                <groupId>jakarta.annotation</groupId>
-                <artifactId>jakarta.annotation-api</artifactId>
-                <version>${jakarta-annotation-version}</version>
+                <groupId>com.github.til7701</groupId>
+                <artifactId>jackson-databind-nullable</artifactId>
+                <version>4e036d76323d35a8ae6f113383ae3ab5e126d12f</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
@@ -102,6 +120,17 @@
                             </configuration>
                         </execution>
                     </executions>
+                </plugin>
+                <plugin>
+                    <groupId>org.panteleyev</groupId>
+                    <artifactId>jpackage-maven-plugin</artifactId>
+                    <version>1.6.3</version>
+                    <configuration>
+                        <vendor>schlunzis</vendor>
+                        <javaOptions>
+                            <option>-Dfile.encoding=UTF-8</option>
+                        </javaOptions>
+                    </configuration>
                 </plugin>
             </plugins>
         </pluginManagement>
