@@ -15,7 +15,7 @@
         <spring.boot.version>3.4.3</spring.boot.version>
         <springdoc.version>2.6.0</springdoc.version>
         <swagger-ui.version>5.17.14</swagger-ui.version>
-        <langchain4j.version>1.0.0-beta1</langchain4j.version>
+        <langchain4j.version>1.0.0-beta2</langchain4j.version>
         <derby.version>10.17.1.0</derby.version>
     </properties>
 
