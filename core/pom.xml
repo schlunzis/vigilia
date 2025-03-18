@@ -56,6 +56,27 @@
             <version>${derby.version}</version>
         </dependency>
 
+
+        <!-- supported JDBC drivers -->
+        <dependency>
+            <groupId>org.postgresql</groupId>
+            <artifactId>postgresql</artifactId>
+            <version>42.7.5</version>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.xerial</groupId>
+            <artifactId>sqlite-jdbc</artifactId>
+            <version>3.49.1.0</version>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.hibernate.orm</groupId>
+            <artifactId>hibernate-community-dialects</artifactId>
+            <version>6.6.11.Final</version>
+        </dependency>
+
+
         <!--SpringDoc dependencies -->
         <dependency>
             <groupId>org.springdoc</groupId>
