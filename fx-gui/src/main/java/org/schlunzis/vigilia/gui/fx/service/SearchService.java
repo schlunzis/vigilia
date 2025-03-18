@@ -22,7 +22,7 @@ public class SearchService {
     public List<SearchResultDTO> search(String query) {
         List<SearchResultDTO> results = null;
         try {
-            ApiResponse<List<SearchResultDTO>> response = defaultApi.searchFilesWithHttpInfo(query);
+            ApiResponse<List<SearchResultDTO>> response = defaultApi.searchFilesWithHttpInfo(query, null, null);
             if (response.getStatusCode() == 200) {
                 results = response.getData();
             } else {

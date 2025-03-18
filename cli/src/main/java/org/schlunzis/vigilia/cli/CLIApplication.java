@@ -4,6 +4,7 @@ import lombok.CustomLog;
 import org.apache.commons.cli.*;
 import org.schlunzis.vigilia.cli.api.DefaultApi;
 import org.schlunzis.vigilia.cli.model.SearchResultDTO;
+import org.schlunzis.vigilia.cli.ui.ResultsPresenter;
 
 import java.nio.file.Path;
 import java.util.List;
@@ -68,9 +69,8 @@ public class CLIApplication {
             String[] queryParts = cmd.getOptionValues("q");
             String query = String.join(" ", queryParts);
             List<SearchResultDTO> resultDTOS = api.searchFiles(query, null, null);
-            for (SearchResultDTO resultDTO : resultDTOS) {
-                log.log(resultDTO);
-            }
+            ResultsPresenter presenter = new ResultsPresenter();
+            presenter.presentResults(resultDTOS);
         }
     }
 
