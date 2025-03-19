@@ -1,4 +1,4 @@
-name: Build with JPackage and to jar
+name: Build with Maven
 
 on:
   workflow_call:
