@@ -57,8 +57,6 @@ public class CLIApplication {
             log.log(CLIApplication.class.getPackage().getImplementationVersion());
             return;
         }
-
-
         DefaultApi api = new DefaultApi();
 
         if (cmd.hasOption("i")) {
