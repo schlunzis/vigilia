@@ -47,7 +47,8 @@ public class QueryCommand extends AbstractCommand {
 
     @Override
     public void printHelp() {
-
+        log.log("Usage: vig query <query>");
+        log.log("Query the indexed files");
     }
 
 }
