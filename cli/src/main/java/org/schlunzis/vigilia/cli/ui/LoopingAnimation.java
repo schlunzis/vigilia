@@ -3,8 +3,7 @@ package org.schlunzis.vigilia.cli.ui;
 import lombok.CustomLog;
 import lombok.RequiredArgsConstructor;
 
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
+import java.util.concurrent.Semaphore;
 
 @CustomLog
 @RequiredArgsConstructor
@@ -13,12 +12,13 @@ public abstract class LoopingAnimation extends AbstractAnimation {
     private final String prefix;
     private final String[] frames;
     private final int frameDelay;
+    private final Semaphore semaphore = new Semaphore(0);
     private volatile boolean stopped = false;
-    private Future<?> future;
+    private Thread thread;
 
     @Override
     public void start() {
-        future = runAsync(() -> {
+        thread = Thread.ofVirtual().start(() -> {
             int frameIndex = 0;
             while (!stopped) {
                 System.out.print("\r" + prefix + frames[frameIndex]); // NOSONAR
@@ -32,20 +32,24 @@ public abstract class LoopingAnimation extends AbstractAnimation {
                 frameIndex = (frameIndex + 1) % frames.length;
             }
             stopped = false;
+            semaphore.release();
         });
     }
 
     @Override
     public void stop() {
+        if (stopped || thread == null)
+            return;
         stopped = true;
+        thread.interrupt();
         try {
-            future.get();
-        } catch (InterruptedException | ExecutionException e) {
+            semaphore.acquire();
+        } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
-            log.log("Error stopping animation", e);
         } finally {
-            log.log("\r");
+            System.out.print("\r"); // NOSONAR
         }
+        thread = null;
     }
 
 }

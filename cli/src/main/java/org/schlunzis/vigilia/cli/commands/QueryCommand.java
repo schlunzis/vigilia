@@ -33,12 +33,11 @@ public class QueryCommand extends AbstractCommand {
             presenter.presentResults(resultDTOS);
         } catch (ApiException e) {
             spinner.stop();
-            log.log(e.getMessage());
             log.log("Failed to query files. Make sure the service is running.");
+            log.log("StatusCode: " + e.getCode());
             // TODO link documentation
             System.exit(1);
         }
-        spinner.stop();
     }
 
     @Override
