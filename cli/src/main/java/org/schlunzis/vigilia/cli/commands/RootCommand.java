@@ -41,8 +41,10 @@ public class RootCommand extends AbstractCommand {
     public void printHelp() {
         log.log("Usage: vig <command>");
         log.log("Commands:");
+        log.log("  help: print this message");
         log.log("  index <paths>: index a directory or file");
         log.log("  query <query>: query the indexed files");
+        log.log("  version: print the version of the CLI");
     }
 
 }
