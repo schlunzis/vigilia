@@ -5,7 +5,6 @@ module vigilia.cli {
     requires org.openapitools.jackson.nullable;
     requires jakarta.annotation;
     requires com.fasterxml.jackson.databind;
-    requires org.apache.commons.cli;
     requires java.logging;
 
     opens org.schlunzis.vigilia.cli.model to com.fasterxml.jackson.databind;
