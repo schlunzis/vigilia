@@ -15,7 +15,10 @@ public class ResultsPresenter {
             presentResult(results.get(i));
             printSeparator();
         }
-        presentResult(results.getLast());
+        if (!results.isEmpty())
+            presentResult(results.getLast());
+        else
+            log.log("No results found.");
     }
 
     private void presentResult(SearchResultDTO result) {
