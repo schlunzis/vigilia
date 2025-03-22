@@ -35,8 +35,8 @@ public class IndexCommand implements Callable<Integer> {
             api.indexFiles(List.of(paths));
         } catch (ApiException e) {
             spinner.stop();
-            log.log(e.getMessage());
             log.log("Failed to index files. Make sure the paths are correct, the files are accessible and the service is running.");
+            log.log("StatusCode: " + e.getCode());
             // TODO link documentation
             return 1;
         }
