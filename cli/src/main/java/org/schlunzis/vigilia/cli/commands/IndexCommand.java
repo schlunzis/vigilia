@@ -20,6 +20,11 @@ public class IndexCommand extends AbstractCommand {
     @Override
     public void execute() {
         super.execute();
+        if (args.length == 0) {
+            log.log("No paths provided");
+            printHelp();
+            System.exit(1);
+        }
 
         Animation spinner = new SpinnerAnimation("Indexing files ");
         spinner.start();

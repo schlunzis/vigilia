@@ -20,6 +20,11 @@ public class QueryCommand extends AbstractCommand {
     @Override
     public void execute() {
         super.execute();
+        if (args.length == 0) {
+            log.log("No query provided");
+            printHelp();
+            System.exit(1);
+        }
 
         Animation spinner = new SpinnerAnimation("Querying files ");
         spinner.start();
