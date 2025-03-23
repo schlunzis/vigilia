@@ -5,26 +5,31 @@ import org.schlunzis.vigilia.cli.ApiException;
 import org.schlunzis.vigilia.cli.api.DefaultApi;
 import org.schlunzis.vigilia.cli.ui.Animation;
 import org.schlunzis.vigilia.cli.ui.SpinnerAnimation;
-import org.schlunzis.vigilia.cli.util.PathUtil;
+import picocli.CommandLine;
 
+import java.io.File;
 import java.util.List;
+import java.util.concurrent.Callable;
 import java.util.stream.Stream;
 
 @CustomLog
-public class IndexCommand extends AbstractCommand {
+@CommandLine.Command(
+        name = "index",
+        aliases = "i",
+        mixinStandardHelpOptions = true,
+        description = "Indexes the given files for later querying"
+)
+public class IndexCommand implements Callable<Integer> {
 
-    protected IndexCommand(String[] args) {
-        super(args);
-    }
+    @CommandLine.Parameters
+    private File[] files;
 
     @Override
-    public void execute() {
-        super.execute();
-
+    public Integer call() {
         Animation spinner = new SpinnerAnimation("Indexing files ");
         spinner.start();
         DefaultApi api = new DefaultApi();
-        String[] paths = Stream.of(args).map(PathUtil::convertToAbsolutePath).toArray(String[]::new);
+        String[] paths = Stream.of(files).map(File::getAbsolutePath).toArray(String[]::new);
 
         try {
             api.indexFiles(List.of(paths));
@@ -33,16 +38,10 @@ public class IndexCommand extends AbstractCommand {
             log.log(e.getMessage());
             log.log("Failed to index files. Make sure the paths are correct, the files are accessible and the service is running.");
             // TODO link documentation
-            System.exit(1);
+            return 1;
         }
         spinner.stop();
-    }
-
-    @Override
-    public void printHelp() {
-        log.log("Usage: vig index <paths>");
-        log.log("Index a directory or file");
-        log.log("Paths can be relative or absolute");
+        return 0;
     }
 
 }

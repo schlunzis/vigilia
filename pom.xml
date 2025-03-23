@@ -21,6 +21,7 @@
         <jackson.version>2.18.3</jackson.version>
         <jakarta-annotation-version>3.0.0</jakarta-annotation-version>
         <jakarta-validation-version>3.1.1</jakarta-validation-version>
+        <picocli.version>4.7.6</picocli.version>
     </properties>
 
     <repositories>
@@ -81,6 +82,17 @@
                 <groupId>com.github.til7701</groupId>
                 <artifactId>jackson-databind-nullable</artifactId>
                 <version>4e036d76323d35a8ae6f113383ae3ab5e126d12f</version>
+            </dependency>
+            <dependency>
+                <groupId>info.picocli</groupId>
+                <artifactId>picocli</artifactId>
+                <version>${picocli.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>info.picocli</groupId>
+                <artifactId>picocli-codegen</artifactId>
+                <version>${picocli.version}</version>
+                <scope>provided</scope>
             </dependency>
         </dependencies>
     </dependencyManagement>

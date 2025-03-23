@@ -7,20 +7,25 @@ import org.schlunzis.vigilia.cli.model.SearchResultDTO;
 import org.schlunzis.vigilia.cli.ui.Animation;
 import org.schlunzis.vigilia.cli.ui.ResultsPresenter;
 import org.schlunzis.vigilia.cli.ui.SpinnerAnimation;
+import picocli.CommandLine;
 
 import java.util.List;
+import java.util.concurrent.Callable;
 
 @CustomLog
-public class QueryCommand extends AbstractCommand {
+@CommandLine.Command(
+        name = "query",
+        aliases = "q",
+        mixinStandardHelpOptions = true,
+        description = "Queries indexed files and displays results"
+)
+public class QueryCommand implements Callable<Integer> {
 
-    protected QueryCommand(String[] args) {
-        super(args);
-    }
+    @CommandLine.Parameters
+    private String[] args;
 
     @Override
-    public void execute() {
-        super.execute();
-
+    public Integer call() {
         Animation spinner = new SpinnerAnimation("Querying files ");
         spinner.start();
         DefaultApi api = new DefaultApi();
@@ -36,14 +41,10 @@ public class QueryCommand extends AbstractCommand {
             log.log(e.getMessage());
             log.log("Failed to query files. Make sure the service is running.");
             // TODO link documentation
-            System.exit(1);
+            return 1;
         }
         spinner.stop();
-    }
-
-    @Override
-    public void printHelp() {
-
+        return 0;
     }
 
 }
