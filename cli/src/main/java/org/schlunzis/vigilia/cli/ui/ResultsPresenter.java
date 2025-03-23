@@ -2,6 +2,7 @@ package org.schlunzis.vigilia.cli.ui;
 
 import lombok.CustomLog;
 import org.schlunzis.vigilia.cli.model.SearchResultDTO;
+import org.schlunzis.vigilia.cli.util.AnsiProvider;
 import org.schlunzis.vigilia.cli.util.ColorSelector;
 import picocli.CommandLine;
 
@@ -12,7 +13,7 @@ import java.util.stream.Collectors;
 @CustomLog
 public class ResultsPresenter {
 
-    private static final CommandLine.Help.Ansi ansi = CommandLine.Help.Ansi.AUTO;
+    private static final CommandLine.Help.Ansi ansi = AnsiProvider.getAnsi();
 
     private double minScore = 0.0;
     private double maxScore = 0.0;
