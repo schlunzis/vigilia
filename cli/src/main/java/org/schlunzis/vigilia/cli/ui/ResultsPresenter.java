@@ -2,6 +2,7 @@ package org.schlunzis.vigilia.cli.ui;
 
 import lombok.CustomLog;
 import org.schlunzis.vigilia.cli.model.SearchResultDTO;
+import picocli.CommandLine;
 
 import java.util.Arrays;
 import java.util.List;
@@ -9,6 +10,8 @@ import java.util.stream.Collectors;
 
 @CustomLog
 public class ResultsPresenter {
+
+    private CommandLine.Help.Ansi ansi = CommandLine.Help.Ansi.AUTO;
 
     public void presentResults(List<SearchResultDTO> results) {
         for (int i = 0; i < results.size() - 1; i++) {
@@ -22,12 +25,15 @@ public class ResultsPresenter {
     }
 
     private void presentResult(SearchResultDTO result) {
-        log.log("\u001B[1m{0}: {1}\u001B[0m", result.getScore(), result.getPath());
+        String resultDisplay = ansi.string("@|bold,underline " + result.getScore() + ": " + result.getPath() + "|@ ");
+        log.log(resultDisplay);
         if (result.getText() == null || result.getText().isBlank())
             return;
         String shortText = Arrays.stream(result.getText().split("\n"))
                 .limit(3)
-                .collect(Collectors.joining("\n"));
+                .collect(Collectors.joining("\n"))
+                .trim();
+        shortText = ansi.string("@|italic " + shortText + "|@");
         log.log(shortText);
     }
 
