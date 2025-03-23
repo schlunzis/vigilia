@@ -8,7 +8,9 @@ import org.schlunzis.vigilia.cli.ui.SpinnerAnimation;
 import picocli.CommandLine;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.Callable;
 import java.util.stream.Stream;
 
@@ -26,13 +28,32 @@ public class IndexCommand implements Callable<Integer> {
 
     @Override
     public Integer call() {
+        List<String> paths = Stream.of(files)
+                .map(f -> {
+                    if (!f.exists()) {
+                        log.log("File " + f.getAbsolutePath() + " does not exist. Skipping.");
+                        return null;
+                    }
+                    try {
+                        return f.getCanonicalPath();
+                    } catch (IOException e) {
+                        log.log("Failed to get canonical path for " + f.getAbsolutePath() + ". Skipping.");
+                    }
+                    return null;
+                })
+                .filter(Objects::nonNull)
+                .toList();
+
+        if (paths.isEmpty()) {
+            log.log("No files to index.");
+            return 0;
+        }
+
         Animation spinner = new SpinnerAnimation("Indexing files ");
         spinner.start();
         DefaultApi api = new DefaultApi();
-        String[] paths = Stream.of(files).map(File::getAbsolutePath).toArray(String[]::new);
-
         try {
-            api.indexFiles(List.of(paths));
+            api.indexFiles(paths);
         } catch (ApiException e) {
             spinner.stop();
             log.log("Failed to index files. Make sure the paths are correct, the files are accessible and the service is running.");
@@ -41,6 +62,7 @@ public class IndexCommand implements Callable<Integer> {
             return 1;
         }
         spinner.stop();
+        log.log("Successfully indexed files.");
         return 0;
     }
 

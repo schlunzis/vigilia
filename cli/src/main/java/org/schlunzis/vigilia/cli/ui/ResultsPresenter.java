@@ -35,6 +35,7 @@ public class ResultsPresenter {
 
     private void presentResult(SearchResultDTO result) {
         @SuppressWarnings("DataFlowIssue") double score = result.getScore();
+        // TODO get absolute min and max for the query from the server
         String scoreColor = ColorSelector.getColor(minScore, maxScore, score);
         String formattedScore = String.format("%.3f", score);
         String resultDisplay = ansi.string("@|" + scoreColor + " " + formattedScore + "|@: @|bold,underline " + result.getPath() + "|@ ");
@@ -45,7 +46,6 @@ public class ResultsPresenter {
                 .limit(3)
                 .collect(Collectors.joining("\n"))
                 .trim();
-        shortText = ansi.string("@|italic " + shortText + "|@");
         log.log(shortText);
     }
 
