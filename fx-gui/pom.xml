@@ -82,7 +82,7 @@
                             <apiPackage>org.schlunzis.vigilia.gui.fx.api</apiPackage>
                             <modelPackage>org.schlunzis.vigilia.gui.fx.model</modelPackage>
                             <supportingFilesToGenerate>
-                                DefaultApi.java,SearchResultDTO.java,ApiClient.java,ApiException.java,ApiResponse.java,Pair.java
+                                DefaultApi.java,SearchResultDTO.java,ApiClient.java,ApiException.java,ApiResponse.java,Pair.java,Configuration.java
                             </supportingFilesToGenerate>
                             <configOptions>
                                 <configPackage>org.schlunzis.vigilia.gui.fx.config</configPackage>
