@@ -1,13 +1,23 @@
 package org.schlunzis.vigilia.cli.commands;
 
-import org.schlunzis.vigilia.cli.CLIApplication;
 import picocli.CommandLine;
+
+import java.io.IOException;
+import java.util.Objects;
+import java.util.Properties;
 
 public class VersionProvider implements CommandLine.IVersionProvider {
 
     @Override
     public String[] getVersion() {
-        return new String[]{CLIApplication.class.getPackage().getImplementationVersion()};
+        Properties myProperties = new Properties();
+        try {
+            myProperties.load(getClass().getResourceAsStream("/version.properties"));
+        } catch (IOException e) {
+            throw new IllegalStateException(e);
+        }
+        String theVersion = Objects.requireNonNull((String) myProperties.get("version"));
+        return new String[]{theVersion};
     }
 
 }
