@@ -101,6 +101,8 @@
                     <noHeaderFiles>true</noHeaderFiles>
                     <noManPages>true</noManPages>
                     <stripDebug>true</stripDebug>
+                    <compress>zip-1</compress>
+                    <addOptions>-Dvigilia.version=${project.version}</addOptions>
                 </configuration>
             </plugin>
             <plugin>
