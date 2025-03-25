@@ -81,7 +81,7 @@
             <dependency>
                 <groupId>com.github.til7701</groupId>
                 <artifactId>jackson-databind-nullable</artifactId>
-                <version>4e036d76323d35a8ae6f113383ae3ab5e126d12f</version>
+                <version>02a580e1fa88d40363fdf34d063a95375ca7e720</version>
             </dependency>
             <dependency>
                 <groupId>info.picocli</groupId>
