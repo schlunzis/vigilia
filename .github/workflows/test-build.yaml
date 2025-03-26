@@ -3,7 +3,7 @@ name: Test Build Process without releasing
 on:
   push:
     paths:
-      - '.github/workflows/**.yml'
+      - '.github/workflows/**.yaml'
 
 jobs:
   read-version-string:
@@ -29,7 +29,7 @@ jobs:
   build:
     name: Build to test
     needs: read-version-string
-    uses: ./.github/workflows/build.yml
+    uses: ./.github/workflows/build.yaml
     with:
       version: ${{ needs.read-version-string.outputs.project_version }}
     secrets: inherit

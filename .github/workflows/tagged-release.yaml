@@ -19,14 +19,14 @@ jobs:
           echo "version=${version}" >> "$GITHUB_OUTPUT"
 
   build:
-    uses: ./.github/workflows/build.yml
+    uses: ./.github/workflows/build.yaml
     with:
       version: ${{ needs.create-version-string.outputs.version }}
     secrets: inherit
 
   release:
     needs: build
-    uses: ./.github/workflows/release.yml
+    uses: ./.github/workflows/release.yaml
     with:
       tag: ${{ github.ref_name }}
       version: ${{ needs.create-version-string.outputs.version }}

@@ -11,7 +11,7 @@ on:
 jobs:
   verify:
     name: Verify Project before Build
-    uses: ./.github/workflows/verify.yml
+    uses: ./.github/workflows/verify.yaml
 
   # Windows does not allow text in versions. See requirements:
   # https://learn.microsoft.com/en-gb/windows/win32/msi/productversion
@@ -24,7 +24,7 @@ jobs:
       - id: step1
         name: Create Version String for Windows and write it to Output
         run: |
-          winVersion=$(echo "${{ inputs.version }}" | grep -oP "\d+\.\d+\.\d+")
+          winVersion=$(echo "${{ inputs.version }}" | grep -oP "\d+(\.\d+)+")
           echo "${winVersion}"
           echo "winVersion=${winVersion}" >> "$GITHUB_OUTPUT"
 
@@ -46,7 +46,7 @@ jobs:
           ./mvnw versions:commit
           
           ./mvnw --batch-mode --update-snapshots package
-          ./mvnw --batch-mode jpackage:jpackage
+          ./mvnw --batch-mode jpackage:jpackage -pl core,cli,fx-gui
       - name: Upload Core
         if: matrix.os == 'ubuntu-latest'
         uses: actions/upload-artifact@v4
