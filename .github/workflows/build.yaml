@@ -46,7 +46,7 @@ jobs:
           ./mvnw versions:commit
           
           ./mvnw --batch-mode --update-snapshots package
-          ./mvnw --batch-mode jpackage:jpackage
+          ./mvnw --batch-mode jpackage:jpackage -pl core,cli,fx-gui
       - name: Upload Core
         if: matrix.os == 'ubuntu-latest'
         uses: actions/upload-artifact@v4
