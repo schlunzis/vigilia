@@ -11,7 +11,7 @@ on:
 jobs:
   verify:
     name: Verify Project before Build
-    uses: ./.github/workflows/verify.yml
+    uses: ./.github/workflows/verify.yaml
 
   # Windows does not allow text in versions. See requirements:
   # https://learn.microsoft.com/en-gb/windows/win32/msi/productversion
