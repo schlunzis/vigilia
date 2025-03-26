@@ -24,7 +24,7 @@ jobs:
       - id: step1
         name: Create Version String for Windows and write it to Output
         run: |
-          winVersion=$(echo "${{ inputs.version }}" | grep -oP "\d+\.\d+\.\d+")
+          winVersion=$(echo "${{ inputs.version }}" | grep -oP "\d+(\.\d+\)+")
           echo "${winVersion}"
           echo "winVersion=${winVersion}" >> "$GITHUB_OUTPUT"
 
