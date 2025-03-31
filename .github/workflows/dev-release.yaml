@@ -32,14 +32,14 @@ jobs:
 
   build:
     needs: create-alpha-version-string
-    uses: ./.github/workflows/build.yml
+    uses: ./.github/workflows/build.yaml
     with:
       version: ${{ needs.create-alpha-version-string.outputs.version }}
     secrets: inherit
 
   release:
     needs: [ build, create-alpha-version-string ]
-    uses: ./.github/workflows/release.yml
+    uses: ./.github/workflows/release.yaml
     with:
       tag: "v${{ needs.create-alpha-version-string.outputs.version }}"
       prerelease: true
