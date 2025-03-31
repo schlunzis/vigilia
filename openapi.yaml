@@ -69,6 +69,20 @@ paths:
           description: Bad request
         '500':
           description: Internal server error
+  /system/media-types:
+    get:
+      summary: Get media types
+      description: Get media types
+      operationId: GetMediaTypes
+      responses:
+        '200':
+          description: Media types retrieved
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/supportedMediaTypes'
+        '500':
+          description: Internal server error
 
 components:
   schemas:
@@ -82,3 +96,22 @@ components:
         score:
           type: number
           format: double
+    supportedMediaTypes:
+      type: object
+      properties:
+        document:
+          type: array
+          items:
+            type: string
+        image:
+          type: array
+          items:
+            type: string
+        video:
+          type: array
+          items:
+            type: string
+        audio:
+          type: array
+          items:
+            type: string
