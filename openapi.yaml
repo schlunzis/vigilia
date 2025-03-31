@@ -98,6 +98,11 @@ components:
           format: double
     supportedMediaTypes:
       type: object
+      required:
+        - document
+        - image
+        - video
+        - audio
       properties:
         document:
           type: array
