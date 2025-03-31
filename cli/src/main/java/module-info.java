@@ -5,10 +5,10 @@ module vigilia.cli {
     requires org.openapitools.jackson.nullable;
     requires jakarta.annotation;
     requires com.fasterxml.jackson.databind;
-    requires org.apache.commons.cli;
-    requires java.logging;
+    requires info.picocli;
 
     opens org.schlunzis.vigilia.cli.model to com.fasterxml.jackson.databind;
+    opens org.schlunzis.vigilia.cli.commands to info.picocli;
 
     exports org.schlunzis.vigilia.cli;
 }

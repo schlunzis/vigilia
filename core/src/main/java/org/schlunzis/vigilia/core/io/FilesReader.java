@@ -66,8 +66,12 @@ public class FilesReader {
     private Optional<List<TextSegment>> readTextSegmentsFromFile(File file) {
         String extension = file.getName().substring(file.getName().lastIndexOf(".") + 1);
         try {
-            switch (extension) {
-                case "md":
+            Optional<SupportedFile> supportedFile = SupportedFile.getSupportedFile(extension);
+            if (supportedFile.isEmpty())
+                return Optional.empty();
+
+            switch (supportedFile.get()) {
+                case MARKDOWN:
                     return Optional.of(new MarkdownSegmenter().readTextSegments(file));
                 default:
                     return Optional.empty();

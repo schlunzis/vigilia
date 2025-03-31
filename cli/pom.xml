@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xmlns="http://maven.apache.org/POM/4.0.0"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
@@ -10,6 +10,7 @@
     </parent>
 
     <artifactId>cli</artifactId>
+    <packaging>jlink</packaging>
 
     <dependencies>
         <!-- JSON processing: jackson -->
@@ -30,14 +31,12 @@
             <artifactId>jackson-datatype-jsr310</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.openapitools</groupId>
+            <groupId>com.github.til7701</groupId>
             <artifactId>jackson-databind-nullable</artifactId>
         </dependency>
-
-        <!-- @Nullable annotation -->
         <dependency>
-            <groupId>com.google.code.findbugs</groupId>
-            <artifactId>jsr305</artifactId>
+            <groupId>jakarta.validation</groupId>
+            <artifactId>jakarta.validation-api</artifactId>
         </dependency>
         <dependency>
             <groupId>jakarta.annotation</groupId>
@@ -45,15 +44,13 @@
         </dependency>
 
         <dependency>
-            <groupId>commons-cli</groupId>
-            <artifactId>commons-cli</artifactId>
-            <version>1.9.0</version>
+            <groupId>info.picocli</groupId>
+            <artifactId>picocli</artifactId>
         </dependency>
     </dependencies>
 
     <build>
         <plugins>
-
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-assembly-plugin</artifactId>
@@ -85,7 +82,7 @@
                             <apiPackage>org.schlunzis.vigilia.cli.api</apiPackage>
                             <modelPackage>org.schlunzis.vigilia.cli.model</modelPackage>
                             <supportingFilesToGenerate>
-                                DefaultApi.java,SearchResultDTO.java,ApiClient.java,ApiException.java,ApiResponse.java,Pair.java
+                                DefaultApi.java,SearchResultDTO.java,ApiClient.java,ApiException.java,ApiResponse.java,Pair.java,Configuration.java
                             </supportingFilesToGenerate>
                             <configOptions>
                                 <configPackage>org.schlunzis.vigilia.cli.config</configPackage>
@@ -95,7 +92,74 @@
                     </execution>
                 </executions>
             </plugin>
+            <plugin>
+                <artifactId>maven-jlink-plugin</artifactId>
+                <version>3.2.0</version>
+                <extensions>true</extensions>
+                <configuration>
+                    <launcher>vig=vigilia.cli/org.schlunzis.vigilia.cli.CLIApplication</launcher>
+                    <noHeaderFiles>true</noHeaderFiles>
+                    <noManPages>true</noManPages>
+                    <stripDebug>true</stripDebug>
+                    <compress>zip-1</compress>
+                    <addOptions>-Dvigilia.version=${project.version}</addOptions>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.panteleyev</groupId>
+                <artifactId>jpackage-maven-plugin</artifactId>
+                <configuration>
+                    <name>Vigilia-CLI</name>
+                    <destination>target</destination>
+                    <module>vigilia.cli/org.schlunzis.vigilia.cli.CLIApplication</module>
+                    <runtimeImage>target/maven-jlink/default</runtimeImage>
+                    <resourceDir>jpackage</resourceDir>
+                </configuration>
+            </plugin>
         </plugins>
     </build>
 
+    <profiles>
+        <profile>
+            <id>linux-deb</id>
+            <activation>
+                <os>
+                    <family>unix</family>
+                </os>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.panteleyev</groupId>
+                        <artifactId>jpackage-maven-plugin</artifactId>
+                        <configuration>
+                            <type>DEB</type>
+                            <linuxPackageName>vig</linuxPackageName>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
+            <id>windows-msi</id>
+            <activation>
+                <os>
+                    <family>windows</family>
+                </os>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.panteleyev</groupId>
+                        <artifactId>jpackage-maven-plugin</artifactId>
+                        <configuration>
+                            <type>MSI</type>
+                            <winUpgradeUuid>68d1e759-99ff-454a-b2c2-5742cd2b3980</winUpgradeUuid>
+                            <winPerUserInstall>true</winPerUserInstall>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 </project>

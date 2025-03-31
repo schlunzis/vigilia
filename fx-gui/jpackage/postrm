@@ -1,0 +1,13 @@
+#!/bin/sh
+
+set -e
+
+echo "Running postrm for vig fx with $1"
+if [ "$1" = 'remove' ]; then
+  # remove the installation folder
+  rm -rf /opt/vig-gui/
+  # remove the link in /bin
+  rm -f /bin/vig-gui
+fi
+
+exit 0

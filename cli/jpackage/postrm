@@ -1,0 +1,13 @@
+#!/bin/sh
+
+set -e
+
+echo "Running postrm for vig cli with $1"
+if [ "$1" = 'remove' ]; then
+  # remove the installation folder
+  rm -rf /opt/vig/
+  # remove the link in /bin
+  rm -f /bin/vig
+fi
+
+exit 0

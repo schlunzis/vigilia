@@ -1,11 +1,34 @@
 package org.schlunzis.vigilia.gui.fx.view;
 
+import org.schlunzis.vigilia.gui.fx.ApiException;
+import org.schlunzis.vigilia.gui.fx.api.DefaultApi;
+import org.schlunzis.vigilia.gui.fx.model.SupportedMediaTypesDTO;
+import org.schlunzis.vigilia.gui.fx.service.ApiProvider;
+
 import java.io.File;
+import java.util.List;
 
 public record TreeFile(File file) implements Comparable<TreeFile> {
 
-    // TODO store this at a central place like a common module or request this from the core
-    private static final String[] SUPPORTED_FILE_TYPES = new String[]{".md"};
+    private static final String[] SUPPORTED_FILE_TYPES;
+
+    static {
+        // TODO: This will default to an empty array if the API call fails. This is not ideal.
+        String[] temp;
+        DefaultApi api = ApiProvider.getDefaultApi();
+        try {
+            SupportedMediaTypesDTO supportedMediaTypesDTO = api.getMediaTypes();
+            List<String> supportedFileTypes = supportedMediaTypesDTO.getAudio();
+            supportedFileTypes.addAll(supportedMediaTypesDTO.getVideo());
+            supportedFileTypes.addAll(supportedMediaTypesDTO.getImage());
+            supportedFileTypes.addAll(supportedMediaTypesDTO.getDocument());
+            temp = supportedFileTypes.toArray(new String[0]);
+        } catch (ApiException _) {
+            temp = new String[0];
+        }
+        SUPPORTED_FILE_TYPES = temp;
+    }
+
 
     public String getName() {
         return file.getName();

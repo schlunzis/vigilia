@@ -36,5 +36,4 @@ build/
 
 
 ### DB ###
-vigiliadb/
-derby.log
+appdata/

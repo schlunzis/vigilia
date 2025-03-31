@@ -135,6 +135,20 @@ paths:
                   $ref: '#/components/schemas/model'
         '500':
           description: Internal server error
+  /system/media-types:
+    get:
+      summary: Get media types
+      description: Get media types
+      operationId: GetMediaTypes
+      responses:
+        '200':
+          description: Media types retrieved
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/supportedMediaTypes'
+        '500':
+          description: Internal server error
 
 components:
   schemas:
@@ -165,3 +179,27 @@ components:
         tokenizerPath:
           type: string
           maxLength: 4096
+    supportedMediaTypes:
+      type: object
+      required:
+        - document
+        - image
+        - video
+        - audio
+      properties:
+        document:
+          type: array
+          items:
+            type: string
+        image:
+          type: array
+          items:
+            type: string
+        video:
+          type: array
+          items:
+            type: string
+        audio:
+          type: array
+          items:
+            type: string
