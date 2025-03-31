@@ -19,9 +19,11 @@ public class ModelManager {
 
     private final Map<String, Model> loadedModels = new HashMap<>();
 
+    public static final String DEFAULT_MODEL = "default";
+
     public Model getModel(String name) {
         return loadedModels.computeIfAbsent(name, _ -> {
-            if (name.equals("default")) {
+            if (name.equals(DEFAULT_MODEL)) {
                 return new PrepackagedModel();
             } else {
                 return loadModel(name);

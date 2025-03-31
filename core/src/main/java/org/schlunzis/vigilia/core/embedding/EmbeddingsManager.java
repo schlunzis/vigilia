@@ -33,7 +33,7 @@ public class EmbeddingsManager {
 
         List<File> failedFiles = new ArrayList<>();
         List<TextSegment> textSegments = filesReader.readTextSegments(files, failedFiles);
-        List<EmbeddingWrapper> embeddings = new ArrayList<>(modelManager.getModel("default").embed(textSegments));
+        List<EmbeddingWrapper> embeddings = new ArrayList<>(modelManager.getModel(ModelManager.DEFAULT_MODEL).embed(textSegments));
 
         embeddingsRepository.saveAll(
                 embeddings
@@ -48,7 +48,7 @@ public class EmbeddingsManager {
         log.info("Searching for: {}", query);
 
         SortedSet<Result> results = queryCache.computeIfAbsent(query, _ ->
-                modelManager.getModel("default")
+                modelManager.getModel(ModelManager.DEFAULT_MODEL)
                         .query(embeddingsRepository.findAll()
                                         .stream()
                                         .map(EmbeddingEntity::toEmbeddingWrapper)
