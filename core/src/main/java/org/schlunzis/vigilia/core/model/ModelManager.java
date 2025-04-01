@@ -33,7 +33,7 @@ public class ModelManager {
 
     private Model loadModel(String name) {
         ModelEntity modelEntity = modelRepository.findById(name).orElseThrow();
-        return new OnnxModel(modelEntity.getModelPath(), modelEntity.getTokenizerPath(), PoolingMode.MEAN);
+        return new OnnxModel(modelEntity.getModelPath(), modelEntity.getTokenizerPath(), modelEntity.getPoolingMode());
     }
 
     public List<ModelEntity> getAllModels() {
