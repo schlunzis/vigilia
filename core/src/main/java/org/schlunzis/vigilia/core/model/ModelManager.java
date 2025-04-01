@@ -41,8 +41,8 @@ public class ModelManager {
     }
 
 
-    public boolean addModel(String name, String modelPath, String tokenizerPath) {
-        modelRepository.save(new ModelEntity(name, modelPath, tokenizerPath));
+    public boolean addModel(String name, String modelPath, String tokenizerPath, PoolingMode poolingMode) {
+        modelRepository.save(new ModelEntity(name, modelPath, tokenizerPath, poolingMode));
         return true;
     }
 

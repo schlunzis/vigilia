@@ -179,6 +179,12 @@ components:
         tokenizerPath:
           type: string
           maxLength: 4096
+        poolingMode:
+          type: string
+          enum:
+            - MEAN
+            - CLS
+          default: MEAN
     supportedMediaTypes:
       type: object
       required:

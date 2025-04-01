@@ -1,5 +1,6 @@
 package org.schlunzis.vigilia.core.entity.model;
 
+import dev.langchain4j.model.embedding.onnx.PoolingMode;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
@@ -24,6 +25,8 @@ public class ModelEntity {
 
     @Column(length = 4096)
     private String tokenizerPath;
+
+    private PoolingMode poolingMode;
 
 }
 

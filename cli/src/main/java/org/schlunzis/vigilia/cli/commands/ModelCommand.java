@@ -22,12 +22,19 @@ public class ModelCommand implements Callable<Integer> {
     private String modelPath;
     @CommandLine.Parameters(index = "2", description = "Path to the tokenizer")
     private String tokenizerPath;
+    @CommandLine.Parameters(index = "3", description = "Pooling mode", arity = "0..1", defaultValue = "CLS")
+    private String poolingMode;
 
     @Override
     public Integer call() {
         try {
             DefaultApi api = new DefaultApi();
-            api.addModel(new AddModelRequestDTO().model(new ModelDTO().name(name).modelPath(modelPath).tokenizerPath(tokenizerPath)));
+            ModelDTO modelDTO = new ModelDTO()
+                    .name(name)
+                    .modelPath(modelPath)
+                    .tokenizerPath(tokenizerPath)
+                    .poolingMode(ModelDTO.PoolingModeEnum.valueOf(poolingMode));
+            api.addModel(new AddModelRequestDTO().model(modelDTO));
             log.log("Model added to the server.");
             return 0;
         } catch (ApiException e) {

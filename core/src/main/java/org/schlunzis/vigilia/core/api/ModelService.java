@@ -1,5 +1,6 @@
 package org.schlunzis.vigilia.core.api;
 
+import dev.langchain4j.model.embedding.onnx.PoolingMode;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.schlunzis.vigilia.core.dto.AddModelRequestDTO;
@@ -23,9 +24,10 @@ public class ModelService implements ModelsApiDelegate {
         String modelPath = model.getModelPath();
         String tokenizerPath = model.getTokenizerPath();
         String name = model.getName();
+        PoolingMode poolingMode = PoolingMode.valueOf(model.getPoolingMode().orElseThrow().getValue());
         log.info("Adding new model {}", name);
 
-        boolean success = modelManager.addModel(name, modelPath, tokenizerPath);
+        boolean success = modelManager.addModel(name, modelPath, tokenizerPath, poolingMode);
 
         if (success) {
             return ResponseEntity.status(201).build();
