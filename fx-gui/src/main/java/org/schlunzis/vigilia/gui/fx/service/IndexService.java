@@ -4,6 +4,7 @@ import lombok.Getter;
 import org.schlunzis.vigilia.gui.fx.ApiException;
 import org.schlunzis.vigilia.gui.fx.ApiResponse;
 import org.schlunzis.vigilia.gui.fx.api.DefaultApi;
+import org.schlunzis.vigilia.gui.fx.model.IndexFilesRequestDTO;
 
 import java.util.List;
 
@@ -19,7 +20,7 @@ public class IndexService {
 
     public boolean index(List<String> paths) {
         try {
-            ApiResponse<Void> response = defaultApi.indexFilesWithHttpInfo(paths);
+            ApiResponse<Void> response = defaultApi.indexFilesWithHttpInfo(new IndexFilesRequestDTO().paths(paths));
             return response.getStatusCode() == 200;
         } catch (ApiException e) {
             return false;
