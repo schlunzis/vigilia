@@ -134,9 +134,11 @@ components:
             type: string
     CoreVersion:
       type: object
+      required:
+        - serviceVersion
+        - apiVersion
       properties:
         serviceVersion:
           type: string
         apiVersion:
           type: string
-
