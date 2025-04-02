@@ -44,6 +44,7 @@ public class SystemService implements SystemApiDelegate {
     public ResponseEntity<CoreVersionDTO> getVersion() {
         String serviceVersion = getClass().getPackage().getImplementationVersion();
         if (serviceVersion == null) {
+            log.warn("No implementation version found. There might be a problem with the build process.");
             serviceVersion = "unknown";
         }
         String apiVersion = openAPI.getInfo().getVersion();
