@@ -1,8 +1,11 @@
 package org.schlunzis.vigilia.core.api;
 
+import io.swagger.v3.oas.models.OpenAPI;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.schlunzis.vigilia.core.io.MediaType;
 import org.schlunzis.vigilia.core.io.SupportedFile;
+import org.schlunzis.vigilia.core.model.CoreVersionDTO;
 import org.schlunzis.vigilia.core.model.SupportedMediaTypesDTO;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -15,7 +18,10 @@ import static java.util.stream.Collectors.groupingBy;
 
 @Slf4j
 @Service
+@RequiredArgsConstructor
 public class SystemService implements SystemApiDelegate {
+
+    private final OpenAPI openAPI;
 
     @Override
     public ResponseEntity<SupportedMediaTypesDTO> getMediaTypes() {
@@ -32,5 +38,19 @@ public class SystemService implements SystemApiDelegate {
                 .video(groupedSupportedMediaFiles.get(MediaType.VIDEO).stream().flatMap(sft -> Arrays.stream(sft.getFileExtensions())).toList())
                 .audio(groupedSupportedMediaFiles.get(MediaType.AUDIO).stream().flatMap(sft -> Arrays.stream(sft.getFileExtensions())).toList())
         );
+    }
+
+    @Override
+    public ResponseEntity<CoreVersionDTO> getVersion() {
+        String serviceVersion = getClass().getPackage().getImplementationVersion();
+        if (serviceVersion == null) {
+            serviceVersion = "unknown";
+        }
+        String apiVersion = openAPI.getInfo().getVersion();
+
+        CoreVersionDTO coreVersionDTO = new CoreVersionDTO()
+                .serviceVersion(serviceVersion)
+                .apiVersion(apiVersion);
+        return ResponseEntity.ok(coreVersionDTO);
     }
 }

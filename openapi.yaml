@@ -83,6 +83,18 @@ paths:
                 $ref: '#/components/schemas/supportedMediaTypes'
         '500':
           description: Internal server error
+  /system/version:
+    get:
+      summary: Get the version of the core
+      description: Get the version of the core
+      operationId: GetVersion
+      responses:
+        '200':
+          description: Version retrieved
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CoreVersion'
 
 components:
   schemas:
@@ -120,3 +132,11 @@ components:
           type: array
           items:
             type: string
+    CoreVersion:
+      type: object
+      properties:
+        serviceVersion:
+          type: string
+        apiVersion:
+          type: string
+
