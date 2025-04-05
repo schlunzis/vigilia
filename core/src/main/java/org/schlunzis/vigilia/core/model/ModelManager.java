@@ -41,9 +41,11 @@ public class ModelManager {
     }
 
 
-    public boolean addModel(String name, String modelPath, String tokenizerPath, PoolingMode poolingMode) {
+    public void addModel(String name, String modelPath, String tokenizerPath, PoolingMode poolingMode) {
+        if (DEFAULT_MODEL.equals(name)) {
+            throw new IllegalArgumentException("The model cannot be named '" + DEFAULT_MODEL + "'");
+        }
         modelRepository.save(new ModelEntity(name, modelPath, tokenizerPath, poolingMode));
-        return true;
     }
 
     public boolean removeModel(String name) {

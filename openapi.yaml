@@ -95,13 +95,32 @@ paths:
                 reindex:
                   type: boolean
                   default: false
+            example:
+              model:
+                name: "myModel"
+                modelPath: "/path/to/model.onnx"
+                tokenizerPath: "/path/to/tokenizer.json"
+                poolingMode: "MEAN"
+              reindex: false
       responses:
         '201':
           description: Registration successful
         '400':
           description: Bad request
+          content:
+            text/plain:
+              schema:
+                type: string
+              example:
+                "The model cannot be named 'default'"
         '500':
           description: Internal server error
+          content:
+            text/plain:
+              schema:
+                type: string
+              example:
+                "Failed to communicated with database"
     delete:
       summary: Remove a model
       description: removes a model specified by the model name

@@ -27,13 +27,12 @@ public class ModelService implements ModelsApiDelegate {
         PoolingMode poolingMode = PoolingMode.valueOf(model.getPoolingMode().orElseThrow().getValue());
         log.info("Adding new model {}", name);
 
-        boolean success = modelManager.addModel(name, modelPath, tokenizerPath, poolingMode);
-
-        if (success) {
+        try {
+            modelManager.addModel(name, modelPath, tokenizerPath, poolingMode);
             return ResponseEntity.status(201).build();
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().build();
         }
-        return ResponseEntity.internalServerError().build();
-
     }
 
     @Override
