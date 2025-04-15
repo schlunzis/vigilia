@@ -3,6 +3,7 @@ package org.schlunzis.vigilia.cli.commands;
 import lombok.CustomLog;
 import org.schlunzis.vigilia.cli.ApiException;
 import org.schlunzis.vigilia.cli.api.DefaultApi;
+import org.schlunzis.vigilia.cli.model.IndexFilesRequestDTO;
 import org.schlunzis.vigilia.cli.ui.Animation;
 import org.schlunzis.vigilia.cli.ui.SpinnerAnimation;
 import picocli.CommandLine;
@@ -53,7 +54,7 @@ public class IndexCommand implements Callable<Integer> {
         spinner.start();
         DefaultApi api = new DefaultApi();
         try {
-            api.indexFiles(paths);
+            api.indexFiles(new IndexFilesRequestDTO().paths(paths));
         } catch (ApiException e) {
             spinner.stop();
             log.log("Failed to index files. Make sure the paths are correct, the files are accessible and the service is running.");

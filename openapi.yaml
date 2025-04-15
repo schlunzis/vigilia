@@ -18,9 +18,16 @@ paths:
         content:
           application/json:
             schema:
-              type: array
-              items:
-                type: string
+              required:
+                - paths
+              properties:
+                paths:
+                  type: array
+                  items:
+                    type: string
+                model:
+                  type: string
+                  default: default
       responses:
         '200':
           description: Indexing successful
@@ -69,6 +76,84 @@ paths:
           description: Bad request
         '500':
           description: Internal server error
+  /models:
+    post:
+      summary: Add a new model
+      description: Adds a new model specified by the path to the model file as well as an identifier for future reference
+      operationId: addModel
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - model
+              properties:
+                model:
+                  $ref: '#/components/schemas/model'
+                reindex:
+                  type: boolean
+                  default: false
+            example:
+              model:
+                name: "myModel"
+                modelPath: "/path/to/model.onnx"
+                tokenizerPath: "/path/to/tokenizer.json"
+                poolingMode: "MEAN"
+              reindex: false
+      responses:
+        '201':
+          description: Registration successful
+        '400':
+          description: Bad request
+          content:
+            text/plain:
+              schema:
+                type: string
+              example:
+                "The model cannot be named 'default'"
+        '500':
+          description: Internal server error
+          content:
+            text/plain:
+              schema:
+                type: string
+              example:
+                "Failed to communicated with database"
+    delete:
+      summary: Remove a model
+      description: removes a model specified by the model name
+      operationId: removeModel
+      parameters:
+        - name: modelName
+          in: query
+          description: Model name
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Deletion successful
+        '400':
+          description: Bad request
+        '500':
+          description: Internal server error
+    get:
+      summary: List all models
+      description: Lists all registered models.
+      operationId: listModels
+      responses:
+        '200':
+          description: Get successful
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/model'
+        '500':
+          description: Internal server error
   /system/media-types:
     get:
       summary: Get media types
@@ -96,6 +181,29 @@ components:
         score:
           type: number
           format: double
+    model:
+      type: object
+      required:
+        - name
+        - modelPath
+        - tokenizerPath
+      properties:
+        name:
+          type: string
+          maxLength: 50
+          minLength: 1
+        modelPath:
+          type: string
+          maxLength: 4096
+        tokenizerPath:
+          type: string
+          maxLength: 4096
+        poolingMode:
+          type: string
+          enum:
+            - MEAN
+            - CLS
+          default: MEAN
     supportedMediaTypes:
       type: object
       required:

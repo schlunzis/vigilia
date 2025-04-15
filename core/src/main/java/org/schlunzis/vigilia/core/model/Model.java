@@ -1,6 +1,8 @@
-package org.schlunzis.vigilia.core.embedding;
+package org.schlunzis.vigilia.core.model;
 
 import dev.langchain4j.data.segment.TextSegment;
+import org.schlunzis.vigilia.core.embedding.EmbeddingWrapper;
+import org.schlunzis.vigilia.core.embedding.Result;
 
 import java.util.List;
 import java.util.SortedSet;

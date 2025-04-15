@@ -13,7 +13,8 @@ import picocli.CommandLine;
         description = "CLI for the vigilia ecosystem",
         subcommands = {
                 IndexCommand.class,
-                QueryCommand.class
+                QueryCommand.class,
+                ModelCommand.class
         }
 )
 public class VigCommand implements Runnable {
@@ -22,7 +23,8 @@ public class VigCommand implements Runnable {
     public void run() {
         OptionPresenter presenter = new OptionPresenter("What do you want to do?",
                 "Index new files",
-                "Query indexed files");
+                "Query indexed files",
+                "Add a new model");
         int selectedOption = presenter.present();
         log.log("");
 
@@ -32,6 +34,9 @@ public class VigCommand implements Runnable {
                 break;
             case 1:
                 handleQuery();
+                break;
+            case 2:
+                handleAddModel();
                 break;
             default:
                 log.log("Unsupported option");
@@ -80,6 +85,23 @@ public class VigCommand implements Runnable {
 
         CommandLine commandLine = new CommandLine(new QueryCommand());
         int exitCode = commandLine.execute(query);
+        System.exit(exitCode);
+    }
+
+    private void handleAddModel() {
+        // TODO: somehow this is broken: getting multiple arguments does not work...
+        InputPresenter presenter = new InputPresenter("Enter a name for the model");
+        String name = presenter.present();
+        log.log("");
+        presenter = new InputPresenter("Enter the path to the model");
+        String modelPath = presenter.present();
+        log.log("");
+        presenter = new InputPresenter("Enter the path to the tokenizer");
+        String tokenizerPath = presenter.present();
+        log.log("");
+
+        CommandLine commandLine = new CommandLine(new ModelCommand());
+        int exitCode = commandLine.execute(name, modelPath, tokenizerPath);
         System.exit(exitCode);
     }
 
