@@ -12,7 +12,7 @@ jobs:
     outputs:
       project_version: ${{ steps.step1.outputs.project_version }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - id: step1
         name: "Read Version String and write to output"
         run: |
