@@ -2,7 +2,7 @@ openapi: 3.0.3
 info:
   title: Vigilia
   description: API for the Vigilia Service
-  version: 1.0.0
+  version: 1.1.0
 
 servers:
   - url: 'http://localhost:54913/api'
@@ -83,6 +83,18 @@ paths:
                 $ref: '#/components/schemas/supportedMediaTypes'
         '500':
           description: Internal server error
+  /system/version:
+    get:
+      summary: Get the version of the core
+      description: Get the version of the core
+      operationId: GetVersion
+      responses:
+        '200':
+          description: Version retrieved
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CoreVersion'
 
 components:
   schemas:
@@ -120,3 +132,13 @@ components:
           type: array
           items:
             type: string
+    CoreVersion:
+      type: object
+      required:
+        - serviceVersion
+        - apiVersion
+      properties:
+        serviceVersion:
+          type: string
+        apiVersion:
+          type: string
