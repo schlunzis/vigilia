@@ -1,4 +1,4 @@
-package org.schlunzis.vigilia.core.model;
+package org.schlunzis.vigilia.core.entity.embedding;
 
 import dev.langchain4j.data.document.Metadata;
 import dev.langchain4j.data.embedding.Embedding;
@@ -34,7 +34,7 @@ public class EmbeddingEntity {
     @Lob
     private String text;
 
-    @Column(length = 10000)
+    @Lob
     @Convert(converter = MetadataConverter.class)
     private Map<String, Object> metadata;
 

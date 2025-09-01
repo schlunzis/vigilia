@@ -1,12 +1,13 @@
-package org.schlunzis.vigilia.core.embedding;
+package org.schlunzis.vigilia.core.model;
 
 import dev.langchain4j.data.embedding.Embedding;
 import dev.langchain4j.data.segment.TextSegment;
 import dev.langchain4j.model.embedding.EmbeddingModel;
-import dev.langchain4j.model.embedding.onnx.allminilml6v2.AllMiniLmL6V2EmbeddingModel;
 import dev.langchain4j.store.embedding.CosineSimilarity;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Component;
+import org.schlunzis.vigilia.core.embedding.EmbeddingWrapper;
+import org.schlunzis.vigilia.core.embedding.Result;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,10 +15,10 @@ import java.util.SortedSet;
 import java.util.TreeSet;
 
 @Slf4j
-@Component
-public class PrepackagedModel implements Model {
+@RequiredArgsConstructor
+public abstract class AbstractModel implements Model {
 
-    private final EmbeddingModel embeddingModel = new AllMiniLmL6V2EmbeddingModel();
+    protected final EmbeddingModel embeddingModel;
 
     @Override
     public SortedSet<Result> query(List<EmbeddingWrapper> embeddingWrappers, String query) {
@@ -49,5 +50,4 @@ public class PrepackagedModel implements Model {
     public SortedSet<Result> embedAndQuery(List<TextSegment> textSegments, String query) {
         return query(embed(textSegments), query);
     }
-
 }

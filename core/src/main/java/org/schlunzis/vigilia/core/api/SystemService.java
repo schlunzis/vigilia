@@ -1,9 +1,9 @@
 package org.schlunzis.vigilia.core.api;
 
 import lombok.extern.slf4j.Slf4j;
+import org.schlunzis.vigilia.core.dto.SupportedMediaTypesDTO;
 import org.schlunzis.vigilia.core.io.MediaType;
 import org.schlunzis.vigilia.core.io.SupportedFile;
-import org.schlunzis.vigilia.core.model.SupportedMediaTypesDTO;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
