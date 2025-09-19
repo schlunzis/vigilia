@@ -1,0 +1,16 @@
+description: |
+
+type: object
+required:
+  - sourceType
+  - url
+properties:
+  sourceType:
+    $ref: './sourceType.yaml'
+  url:
+    description: |
+      The URL of the website to index.
+      The URL must start with http:// or https://
+    type: string
+    format: uri
+    minLength: 1

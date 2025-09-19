@@ -1,0 +1,35 @@
+info:
+  get:
+    summary: Get system information
+    description: |
+      This endpoint provides information about the system.
+    operationId: getSystemInfo
+    tags:
+      - system
+    responses:
+      '200':
+        description: System information retrieved successfully
+        content:
+          application/json:
+            schema:
+              $ref: '../components/schemas/system/systemInfo.yaml'
+
+metadata-keys:
+  get:
+    summary: Get metadata keys
+    description: |
+      This endpoint provides the metadata keys that are supported for searching.
+      This list includes custom keys provided via additional properties.
+      All keys are complete. So there is no need to add `additionalProperties.` for custom keys.
+    operationId: getMetadataKeys
+    tags:
+      - system
+    responses:
+      '200':
+        description: Metadata keys retrieved successfully
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                type: string

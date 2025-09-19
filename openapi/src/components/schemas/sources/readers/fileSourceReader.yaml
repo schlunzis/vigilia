@@ -1,0 +1,15 @@
+type: object
+required:
+  - sourceType
+properties:
+  sourceType:
+    $ref: '../sourceType.yaml'
+  supportedFileEndings:
+    type: array
+    description: A list of file extensions that this file source reader can handle (e.g., ["txt", "pdf"])
+    items:
+      type: string
+      minLength: 1
+      pattern: '^[a-zA-Z0-9]+$'
+    minItems: 1
+    uniqueItems: true

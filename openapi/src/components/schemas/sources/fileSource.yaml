@@ -1,0 +1,15 @@
+description: |
+
+type: object
+required:
+  - sourceType
+  - path
+properties:
+  sourceType:
+    $ref: './sourceType.yaml'
+  path:
+    description: |
+      The file path to a file or directory.
+      The path must be absolute.
+    type: string
+    minLength: 1

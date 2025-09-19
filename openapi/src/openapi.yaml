@@ -1,0 +1,47 @@
+openapi: 3.0.3
+info:
+  title: Vigilia
+  description: API for the Vigilia Service
+  version: 0.1.0
+
+servers:
+  - url: 'http://localhost:54913/api'
+
+paths:
+  /sources:
+    $ref: './paths/sources.yaml#/root'
+  /sources/readers:
+    $ref: './paths/sources.yaml#/readers'
+  /search:
+    $ref: './paths/search.yaml'
+  /system/info:
+    $ref: './paths/system.yaml#/info'
+  /system/metadata-keys:
+    $ref: './paths/system.yaml#/metadata-keys'
+
+components:
+  schemas:
+    sourceType:
+      $ref: './components/schemas/sources/sourceType.yaml'
+    source:
+      $ref: './components/schemas/sources/source.yaml'
+    fileSource:
+      $ref: './components/schemas/sources/fileSource.yaml'
+    websiteSource:
+      $ref: './components/schemas/sources/websiteSource.yaml'
+    sourceMetadata:
+      $ref: './components/schemas/sources/sourceMetadata.yaml'
+    indexStatus:
+      $ref: './components/schemas/sources/indexStatus.yaml'
+    sourceReader:
+      $ref: './components/schemas/sources/readers/sourceReader.yaml'
+    fileSourceReader:
+      $ref: './components/schemas/sources/readers/fileSourceReader.yaml'
+    websiteSourceReader:
+      $ref: './components/schemas/sources/readers/websiteSourceReader.yaml'
+    searchRequest:
+      $ref: './components/schemas/search/searchRequest.yaml'
+    searchResult:
+      $ref: './components/schemas/search/searchResult.yaml'
+    systemInfo:
+      $ref: './components/schemas/system/systemInfo.yaml'

@@ -1,0 +1,32 @@
+type: object
+required:
+  - serverVersion
+  - apiVersion
+  - embeddingContextWindow
+  - chatContextWindow
+  - maxEmbeddingsInChat
+properties:
+  serverVersion:
+    type: string
+    description: The version of the server
+  apiVersion:
+    type: string
+    description: The version of the API implemented by the server
+  embeddingContextWindow:
+    type: integer
+    description: |
+      The context window size used for embeddings.
+      Null if unknown.
+    nullable: true
+  chatContextWindow:
+    type: integer
+    description: |
+      The context window size used for chat interactions.
+      Null if unknown.
+    nullable: true
+  maxEmbeddingsInChat:
+    type: integer
+    description: |
+      The maximum number of embeddings that can be used in a chat.
+      Null if unknown.
+    nullable: true

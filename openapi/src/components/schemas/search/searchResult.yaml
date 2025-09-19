@@ -1,0 +1,23 @@
+type: object
+description: |
+  A single search result from an embedding search.
+required:
+properties:
+  sourceId:
+    type: string
+    format: uuid
+    description: |
+      The unique identifier of the source where the result was found.
+  sourceType:
+    $ref: '../sources/sourceType.yaml'
+  metadata:
+    $ref: '../sources/sourceMetadata.yaml'
+  text:
+    type: string
+    description: |
+      A snippet of text from the source that is relevant to the search query.
+  score:
+    type: number
+    format: double
+    description: |
+      A score indicating how relevant the result is to the search query. Higher scores indicate greater relevance.

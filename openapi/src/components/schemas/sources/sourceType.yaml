@@ -1,0 +1,6 @@
+description: |
+  This enum is used as a discriminator for sources.
+type: string
+enum:
+  - FILE
+  - WEBSITE
