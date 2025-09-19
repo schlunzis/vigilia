@@ -9,12 +9,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - name: Change directory
-        run: cd openapi
       - name: Check if bundled correctly
         run: |
+          cd openapi
           ./bundle.sh
           git diff --exit-code --name-only
       - name: Validate Document
         run: |
+          cd openapi
           ./validate.sh
