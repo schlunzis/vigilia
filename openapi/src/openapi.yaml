@@ -18,6 +18,8 @@ paths:
     $ref: './paths/system.yaml#/info'
   /system/metadata-keys:
     $ref: './paths/system.yaml#/metadata-keys'
+  /models/embedding:
+    $ref: './paths/models.yaml#/embedding'
 
 components:
   schemas:
@@ -45,3 +47,11 @@ components:
       $ref: './components/schemas/search/searchResult.yaml'
     systemInfo:
       $ref: './components/schemas/system/systemInfo.yaml'
+    embeddingModel:
+      $ref: './components/schemas/model/embeddingModel.yaml'
+    embeddingModelType:
+      $ref: './components/schemas/model/embeddingModelType.yaml'
+    openAIEmbeddingModel:
+      $ref: './components/schemas/model/openAIEmbeddingModel.yaml'
+    onnxEmbeddingModel:
+      $ref: './components/schemas/model/onnxEmbeddingModel.yaml'

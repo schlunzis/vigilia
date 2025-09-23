@@ -1,0 +1,60 @@
+embedding:
+  get:
+    summary: List embedding models
+    operationId: listEmbeddingModels
+    tags:
+      - models
+    responses:
+      '200':
+        description: A list of embedding models
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '../components/schemas/model/embeddingModel.yaml'
+
+  post:
+    summary: Create a new embedding model
+    operationId: createEmbeddingModel
+    tags:
+      - models
+    requestBody:
+      description: The embedding model to create
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '../components/schemas/model/embeddingModel.yaml'
+    responses:
+      '201':
+        description: The created embedding model
+        content:
+          application/json:
+            schema:
+              $ref: '../components/schemas/model/embeddingModel.yaml'
+      '400':
+        description: Invalid input
+      '409':
+        description: An embedding model with the same name already exists
+
+  delete:
+    summary: Delete a specific embedding model
+    operationId: deleteEmbeddingModel
+    tags:
+      - models
+    parameters:
+      - name: modelId
+        in: query
+        description: The unique identifier of the embedding model to delete
+        required: true
+        schema:
+          type: string
+          format: uuid
+    responses:
+      '204':
+        description: The embedding model was deleted successfully
+      '400':
+        description: Invalid model ID
+      '404':
+        description: Embedding model not found
