@@ -1,0 +1,22 @@
+# Example compose file for local development and testing
+# DO NOT USE IN PRODUCTION!
+# DO NOT USE DEFAULT CREDENTIALS IN PRODUCTION!
+
+# It is required to have the object storage service running before starting this stack.
+name: Vigilia Test DB
+services:
+  db:
+    image: mariadb:11.8.2-ubi9
+    ports:
+      - "3306:3306"
+    environment:
+      - MARIADB_USER=example
+      - MARIADB_PASSWORD=example
+      - MARIADB_DATABASE=example
+      - MARIADB_ROOT_PASSWORD=example
+    healthcheck:
+      test: [ "CMD", "healthcheck.sh", "--connect", "--innodb_initialized" ]
+      start_period: 10s
+      interval: 10s
+      timeout: 5s
+      retries: 3

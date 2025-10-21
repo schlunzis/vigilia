@@ -1,0 +1,20 @@
+spring:
+  application:
+    name: Vigilia
+  jpa:
+    hibernate:
+      ddl-auto: update
+  cache:
+    cache-names:
+      - embeddingSearch
+    caffeine:
+      spec: maximumSize=50,expireAfterAccess=600s
+server:
+  port: 54913
+  address: 127.0.0.1
+vigilia:
+  data:
+    appdir: ${user.home}${file.separator}.vigilia
+    datasource.url: jdbc:sqlite:${vigilia.appdir}${file.separator}vigilia.db
+  vector-store:
+    initialize-schema: true

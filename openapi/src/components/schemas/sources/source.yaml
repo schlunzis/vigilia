@@ -25,3 +25,4 @@ properties:
     description: The unique identifier of the source reader that indexed this source.
     type: string
     format: uuid
+additionalProperties: true
