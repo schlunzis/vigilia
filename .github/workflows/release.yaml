@@ -17,15 +17,15 @@ jobs:
     name: Download and Release Artifacts
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/download-artifact@v5
+      - uses: actions/download-artifact@v6
         name: Download core deb-Package
         with:
           name: core-deb
-      - uses: actions/download-artifact@v5
+      - uses: actions/download-artifact@v6
         name: Download cli deb-Package
         with:
           name: cli-deb
-      - uses: actions/download-artifact@v5
+      - uses: actions/download-artifact@v6
         name: Download fx-gui deb-Package
         with:
           name: fx-gui-deb
