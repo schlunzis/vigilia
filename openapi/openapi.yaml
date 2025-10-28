@@ -173,6 +173,64 @@ paths:
       summary: Get metadata keys
       tags:
       - system
+  /models/embedding:
+    delete:
+      operationId: deleteEmbeddingModel
+      parameters:
+      - description: The unique identifier of the embedding model to delete
+        in: query
+        name: modelId
+        required: true
+        schema:
+          format: uuid
+          type: string
+      responses:
+        "204":
+          description: The embedding model was deleted successfully
+        "400":
+          description: Invalid model ID
+        "404":
+          description: Embedding model not found
+      summary: Delete a specific embedding model
+      tags:
+      - models
+    get:
+      operationId: listEmbeddingModels
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/embeddingModel'
+                type: array
+          description: A list of embedding models
+      summary: List embedding models
+      tags:
+      - models
+    post:
+      operationId: createEmbeddingModel
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/embeddingModel'
+        description: The embedding model to create
+        required: true
+      responses:
+        "201":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/embeddingModel'
+          description: The created embedding model
+        "400":
+          description: Invalid input
+        "409":
+          description: An embedding model with the same name already exists
+      summary: Create a new embedding model
+      tags:
+      - models
 components:
   schemas:
     sourceType:
@@ -183,6 +241,7 @@ components:
       - WEBSITE
       type: string
     source:
+      additionalProperties: true
       description: |
         This is the base for all converter structures.
         The converterType is used as a discriminator to determine the specific structure.
@@ -242,7 +301,6 @@ components:
         url:
           description: |
             The URL of the website to index.
-            The URL must start with http:// or https://
           format: uri
           minLength: 1
           type: string
@@ -439,4 +497,67 @@ components:
       - embeddingContextWindow
       - maxEmbeddingsInChat
       - serverVersion
+      type: object
+    embeddingModel:
+      discriminator:
+        mapping:
+          OPENAI: '#/components/schemas/openAIEmbeddingModel'
+          ONNX: '#/components/schemas/onnxEmbeddingModel'
+        propertyName: modelType
+      example:
+        name: name
+        modelType: OPENAI
+        id: 046b6c7f-0b8a-43b9-b35d-6489e6daee91
+      oneOf:
+      - $ref: '#/components/schemas/openAIEmbeddingModel'
+      - $ref: '#/components/schemas/onnxEmbeddingModel'
+      properties:
+        modelType:
+          $ref: '#/components/schemas/embeddingModelType'
+        id:
+          description: The unique identifier of the embedding model.
+          format: uuid
+          type: string
+        name:
+          description: The name of the embedding model. This can be chosen by the
+            user and used by them to identify the model.
+          type: string
+      required:
+      - modelType
+      type: object
+    embeddingModelType:
+      enum:
+      - OPENAI
+      - ONNX
+      type: string
+    openAIEmbeddingModel:
+      properties:
+        modelType:
+          $ref: '#/components/schemas/embeddingModelType'
+        url:
+          description: The URL of the OpenAI API endpoint.
+          example: https://example.com/api/v1
+          format: uri
+          type: string
+        apiKey:
+          description: The API key used for authentication with the OpenAI service.
+          example: test-api-key
+          type: string
+        modelName:
+          description: The name of the OpenAI embedding model to be used.
+          example: smollm2
+          type: string
+      type: object
+    onnxEmbeddingModel:
+      properties:
+        modelType:
+          $ref: '#/components/schemas/embeddingModelType'
+        modelPath:
+          description: The file path to the ONNX model.
+          example: /models/onnx/model.onnx
+          type: string
+        tokenizerPath:
+          description: The file path to the tokenizer associated with the ONNX model.
+          example: /models/onnx/tokenizer.json
+          type: string
       type: object
