@@ -547,6 +547,11 @@ components:
           description: The name of the OpenAI embedding model to be used.
           example: smollm2
           type: string
+      required:
+      - apiKey
+      - modelName
+      - modelType
+      - url
       type: object
     onnxEmbeddingModel:
       properties:
@@ -560,4 +565,8 @@ components:
           description: The file path to the tokenizer associated with the ONNX model.
           example: /models/onnx/tokenizer.json
           type: string
+      required:
+      - modelPath
+      - modelType
+      - tokenizerPath
       type: object

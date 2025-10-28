@@ -1,4 +1,9 @@
 type: object
+required:
+  - modelType
+  - url
+  - apiKey
+  - modelName
 properties:
   modelType:
     $ref: './embeddingModelType.yaml'

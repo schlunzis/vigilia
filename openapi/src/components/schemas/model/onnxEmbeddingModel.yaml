@@ -1,4 +1,8 @@
 type: object
+required:
+  - modelType
+  - modelPath
+  - tokenizerPath
 properties:
   modelType:
     $ref: './embeddingModelType.yaml'
