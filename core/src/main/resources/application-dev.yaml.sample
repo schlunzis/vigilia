@@ -1,0 +1,5 @@
+vigilia.data.appdir: appdata
+spring.datasource:
+  username: example
+  password: example
+  url: jdbc:mariadb://localhost:3306/example

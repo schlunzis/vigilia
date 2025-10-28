@@ -1,0 +1,572 @@
+openapi: 3.0.3
+info:
+  description: API for the Vigilia Service
+  title: Vigilia
+  version: 0.1.0
+servers:
+- url: http://localhost:54913/api
+paths:
+  /sources:
+    delete:
+      operationId: deleteSource
+      parameters:
+      - description: The identifier of the source to delete
+        in: query
+        name: id
+        required: true
+        schema:
+          format: uuid
+          type: string
+      responses:
+        "204":
+          description: Source deleted successfully
+        "404":
+          description: Source not found
+      summary: Delete a source
+      tags:
+      - sources
+    get:
+      operationId: listSources
+      parameters:
+      - description: |
+          An optional filter expression to filter the sources.
+          This can be used to filter results based on specific criteria.
+          The syntax of the filter expression can be found in the server documentation.
+        in: query
+        name: filterExpression
+        schema:
+          type: string
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/source'
+                type: array
+          description: A list of sources
+      summary: Retrieve a list of sources
+      tags:
+      - sources
+    post:
+      operationId: createSource
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/source'
+        description: Source to add
+        required: true
+      responses:
+        "201":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/source'
+          description: Source created successfully
+        "400":
+          description: Bad request
+        "409":
+          description: Conflict - Source already exists
+      summary: Create a new source
+      tags:
+      - sources
+  /sources/readers:
+    get:
+      operationId: listSourcesReaders
+      parameters:
+      - description: An optional reader ID to filter the source readers
+        in: query
+        name: readerId
+        schema:
+          format: uuid
+          type: string
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/sourceReader'
+                type: array
+          description: A list of source readers
+      summary: Retrieve a list of source readers
+      tags:
+      - sources
+      - readers
+  /search:
+    post:
+      description: |
+        This endpoint allows you to search for indexed files.
+        You can specify the page number and size for pagination.
+        The search query is required in the request body.
+      operationId: searchFiles
+      parameters:
+      - description: Page number
+        in: query
+        name: pageNumber
+        required: false
+        schema:
+          default: 0
+          format: int32
+          type: integer
+      - description: Page size
+        in: query
+        name: pageSize
+        required: false
+        schema:
+          default: 10
+          format: int32
+          type: integer
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/searchRequest'
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/searchResult'
+                minItems: 0
+                type: array
+          description: Search successful
+        "400":
+          description: Bad request
+      summary: Search for files
+      tags:
+      - search
+  /system/info:
+    get:
+      description: |
+        This endpoint provides information about the system.
+      operationId: getSystemInfo
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/systemInfo'
+          description: System information retrieved successfully
+      summary: Get system information
+      tags:
+      - system
+  /system/metadata-keys:
+    get:
+      description: |
+        This endpoint provides the metadata keys that are supported for searching.
+        This list includes custom keys provided via additional properties.
+        All keys are complete. So there is no need to add `additionalProperties.` for custom keys.
+      operationId: getMetadataKeys
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                items:
+                  type: string
+                type: array
+          description: Metadata keys retrieved successfully
+      summary: Get metadata keys
+      tags:
+      - system
+  /models/embedding:
+    delete:
+      operationId: deleteEmbeddingModel
+      parameters:
+      - description: The unique identifier of the embedding model to delete
+        in: query
+        name: modelId
+        required: true
+        schema:
+          format: uuid
+          type: string
+      responses:
+        "204":
+          description: The embedding model was deleted successfully
+        "400":
+          description: Invalid model ID
+        "404":
+          description: Embedding model not found
+      summary: Delete a specific embedding model
+      tags:
+      - models
+    get:
+      operationId: listEmbeddingModels
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/embeddingModel'
+                type: array
+          description: A list of embedding models
+      summary: List embedding models
+      tags:
+      - models
+    post:
+      operationId: createEmbeddingModel
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/embeddingModel'
+        description: The embedding model to create
+        required: true
+      responses:
+        "201":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/embeddingModel'
+          description: The created embedding model
+        "400":
+          description: Invalid input
+        "409":
+          description: An embedding model with the same name already exists
+      summary: Create a new embedding model
+      tags:
+      - models
+components:
+  schemas:
+    sourceType:
+      description: |
+        This enum is used as a discriminator for sources.
+      enum:
+      - FILE
+      - WEBSITE
+      type: string
+    source:
+      additionalProperties: true
+      description: |
+        This is the base for all converter structures.
+        The converterType is used as a discriminator to determine the specific structure.
+      discriminator:
+        mapping:
+          FILE: '#/components/schemas/fileSource'
+          WEBSITE: '#/components/schemas/websiteSource'
+        propertyName: sourceType
+      example:
+        metadata:
+          lastUpdatedDate: 2000-01-23T04:56:07.000+00:00
+          addedDate: 2000-01-23T04:56:07.000+00:00
+          title: title
+        sourceType: FILE
+        indexedWith: 046b6c7f-0b8a-43b9-b35d-6489e6daee91
+        id: 046b6c7f-0b8a-43b9-b35d-6489e6daee91
+      oneOf:
+      - $ref: '#/components/schemas/fileSource'
+      - $ref: '#/components/schemas/websiteSource'
+      properties:
+        sourceType:
+          $ref: '#/components/schemas/sourceType'
+        id:
+          description: The unique identifier of the source.
+          format: uuid
+          type: string
+        metadata:
+          $ref: '#/components/schemas/sourceMetadata'
+        indexedWith:
+          description: The unique identifier of the source reader that indexed this
+            source.
+          format: uuid
+          type: string
+      required:
+      - sourceType
+      type: object
+    fileSource:
+      description: ""
+      properties:
+        sourceType:
+          $ref: '#/components/schemas/sourceType'
+        path:
+          description: |
+            The file path to a file or directory.
+            The path must be absolute.
+          minLength: 1
+          type: string
+      required:
+      - path
+      - sourceType
+      type: object
+    websiteSource:
+      description: ""
+      properties:
+        sourceType:
+          $ref: '#/components/schemas/sourceType'
+        url:
+          description: |
+            The URL of the website to index.
+          format: uri
+          minLength: 1
+          type: string
+      required:
+      - sourceType
+      - url
+      type: object
+    sourceMetadata:
+      additionalProperties: true
+      description: ""
+      example:
+        lastUpdatedDate: 2000-01-23T04:56:07.000+00:00
+        addedDate: 2000-01-23T04:56:07.000+00:00
+        title: title
+      properties:
+        title:
+          description: The title of the source.
+          type: string
+        addedDate:
+          description: |
+            The date and time the source was added.
+          format: date-time
+          type: string
+        lastUpdatedDate:
+          description: |
+            The date and time the source was last updated.
+          format: date-time
+          type: string
+      type: object
+    indexStatus:
+      description: |
+        This enum is used as a discriminator for sources.
+      enum:
+      - NOT_INDEXED
+      - INDEXING
+      - INDEXED
+      - INDEXING_FAILED
+      type: string
+    sourceReader:
+      description: |
+        This is the base for all converter structures.
+        The converterType is used as a discriminator to determine the specific structure.
+      discriminator:
+        mapping:
+          FILE: '#/components/schemas/fileSourceReader'
+          WEBSITE: '#/components/schemas/websiteSourceReader'
+        propertyName: sourceType
+      example:
+        sourceType: FILE
+        name: name
+        description: description
+        id: 046b6c7f-0b8a-43b9-b35d-6489e6daee91
+        priority: 1
+      oneOf:
+      - $ref: '#/components/schemas/fileSourceReader'
+      - $ref: '#/components/schemas/websiteSourceReader'
+      properties:
+        sourceType:
+          $ref: '#/components/schemas/sourceType'
+        id:
+          description: The unique identifier for the source reader
+          format: uuid
+          type: string
+        name:
+          description: The name of the source reader
+          type: string
+        description:
+          description: A brief description of the source reader
+          type: string
+        priority:
+          description: The priority of the source reader (lower numbers indicate higher
+            priority)
+          minimum: 1
+          type: integer
+      required:
+      - sourceType
+      type: object
+    fileSourceReader:
+      properties:
+        sourceType:
+          $ref: '#/components/schemas/sourceType'
+        supportedFileEndings:
+          description: "A list of file extensions that this file source reader can\
+            \ handle (e.g., [\"txt\", \"pdf\"])"
+          items:
+            minLength: 1
+            pattern: "^[a-zA-Z0-9]+$"
+            type: string
+          minItems: 1
+          type: array
+          uniqueItems: true
+      required:
+      - sourceType
+      type: object
+    websiteSourceReader:
+      properties:
+        sourceType:
+          $ref: '#/components/schemas/sourceType'
+        supportedDomains:
+          description: |
+            A list of domain names that this website source reader can handle (e.g., ["example.com", "anotherdomain.org"])
+            Wildcards are supported (e.g., ["*.example.com"] to include all subdomains).
+          items:
+            type: string
+          minItems: 1
+          type: array
+          uniqueItems: true
+      required:
+      - sourceType
+      type: object
+    searchRequest:
+      description: |
+        A request to perform an embedding search on sources.
+      properties:
+        query:
+          description: The search query to find indexed files
+          type: string
+        filterExpression:
+          description: |
+            An optional filter expression to filter the search results.
+            This can be used to filter results based on specific criteria.
+            The syntax of the filter expression can be found in the server documentation.
+          type: string
+      required:
+      - query
+      type: object
+    searchResult:
+      description: |
+        A single search result from an embedding search.
+      example:
+        sourceId: 046b6c7f-0b8a-43b9-b35d-6489e6daee91
+        score: 0.8008281904610115
+        metadata:
+          lastUpdatedDate: 2000-01-23T04:56:07.000+00:00
+          addedDate: 2000-01-23T04:56:07.000+00:00
+          title: title
+        sourceType: FILE
+        text: text
+      properties:
+        sourceId:
+          description: |
+            The unique identifier of the source where the result was found.
+          format: uuid
+          type: string
+        sourceType:
+          $ref: '#/components/schemas/sourceType'
+        metadata:
+          $ref: '#/components/schemas/sourceMetadata'
+        text:
+          description: |
+            A snippet of text from the source that is relevant to the search query.
+          type: string
+        score:
+          description: |
+            A score indicating how relevant the result is to the search query. Higher scores indicate greater relevance.
+          format: double
+          type: number
+      type: object
+    systemInfo:
+      example:
+        serverVersion: serverVersion
+        maxEmbeddingsInChat: 1
+        apiVersion: apiVersion
+        embeddingContextWindow: 0
+        chatContextWindow: 6
+      properties:
+        serverVersion:
+          description: The version of the server
+          type: string
+        apiVersion:
+          description: The version of the API implemented by the server
+          type: string
+        embeddingContextWindow:
+          description: |
+            The context window size used for embeddings.
+            Null if unknown.
+          nullable: true
+          type: integer
+        chatContextWindow:
+          description: |
+            The context window size used for chat interactions.
+            Null if unknown.
+          nullable: true
+          type: integer
+        maxEmbeddingsInChat:
+          description: |
+            The maximum number of embeddings that can be used in a chat.
+            Null if unknown.
+          nullable: true
+          type: integer
+      required:
+      - apiVersion
+      - chatContextWindow
+      - embeddingContextWindow
+      - maxEmbeddingsInChat
+      - serverVersion
+      type: object
+    embeddingModel:
+      discriminator:
+        mapping:
+          OPENAI: '#/components/schemas/openAIEmbeddingModel'
+          ONNX: '#/components/schemas/onnxEmbeddingModel'
+        propertyName: modelType
+      example:
+        name: name
+        modelType: OPENAI
+        id: 046b6c7f-0b8a-43b9-b35d-6489e6daee91
+      oneOf:
+      - $ref: '#/components/schemas/openAIEmbeddingModel'
+      - $ref: '#/components/schemas/onnxEmbeddingModel'
+      properties:
+        modelType:
+          $ref: '#/components/schemas/embeddingModelType'
+        id:
+          description: The unique identifier of the embedding model.
+          format: uuid
+          type: string
+        name:
+          description: The name of the embedding model. This can be chosen by the
+            user and used by them to identify the model.
+          type: string
+      required:
+      - modelType
+      type: object
+    embeddingModelType:
+      enum:
+      - OPENAI
+      - ONNX
+      type: string
+    openAIEmbeddingModel:
+      properties:
+        modelType:
+          $ref: '#/components/schemas/embeddingModelType'
+        url:
+          description: The URL of the OpenAI API endpoint.
+          example: https://example.com/api/v1
+          format: uri
+          type: string
+        apiKey:
+          description: The API key used for authentication with the OpenAI service.
+          example: test-api-key
+          type: string
+        modelName:
+          description: The name of the OpenAI embedding model to be used.
+          example: smollm2
+          type: string
+      required:
+      - apiKey
+      - modelName
+      - modelType
+      - url
+      type: object
+    onnxEmbeddingModel:
+      properties:
+        modelType:
+          $ref: '#/components/schemas/embeddingModelType'
+        modelPath:
+          description: The file path to the ONNX model.
+          example: /models/onnx/model.onnx
+          type: string
+        tokenizerPath:
+          description: The file path to the tokenizer associated with the ONNX model.
+          example: /models/onnx/tokenizer.json
+          type: string
+      required:
+      - modelPath
+      - modelType
+      - tokenizerPath
+      type: object

@@ -1,0 +1,22 @@
+type: object
+required:
+  - modelType
+  - url
+  - apiKey
+  - modelName
+properties:
+  modelType:
+    $ref: './embeddingModelType.yaml'
+  url:
+    description: The URL of the OpenAI API endpoint.
+    type: string
+    format: uri
+    example: https://example.com/api/v1
+  apiKey:
+    description: The API key used for authentication with the OpenAI service.
+    type: string
+    example: test-api-key
+  modelName:
+    description: The name of the OpenAI embedding model to be used.
+    type: string
+    example: smollm2

@@ -1,0 +1,18 @@
+description: |
+
+type: object
+properties:
+  title:
+    type: string
+    description: The title of the source.
+  addedDate:
+    type: string
+    format: date-time
+    description: |
+      The date and time the source was added.
+  lastUpdatedDate:
+    type: string
+    format: date-time
+    description: |
+      The date and time the source was last updated.
+additionalProperties: true

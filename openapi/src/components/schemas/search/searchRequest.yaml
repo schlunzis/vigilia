@@ -1,0 +1,15 @@
+type: object
+description: |
+  A request to perform an embedding search on sources.
+required:
+  - query
+properties:
+  query:
+    type: string
+    description: The search query to find indexed files
+  filterExpression:
+    type: string
+    description: |
+      An optional filter expression to filter the search results.
+      This can be used to filter results based on specific criteria.
+      The syntax of the filter expression can be found in the server documentation.

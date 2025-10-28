@@ -1,0 +1,16 @@
+type: object
+required:
+  - modelType
+  - modelPath
+  - tokenizerPath
+properties:
+  modelType:
+    $ref: './embeddingModelType.yaml'
+  modelPath:
+    description: The file path to the ONNX model.
+    type: string
+    example: /models/onnx/model.onnx
+  tokenizerPath:
+    description: The file path to the tokenizer associated with the ONNX model.
+    type: string
+    example: /models/onnx/tokenizer.json

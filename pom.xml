@@ -15,7 +15,7 @@
     </modules>
 
     <properties>
-        <java.version>23</java.version>
+        <java.version>24</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <lombok.version>1.18.38</lombok.version>
         <jackson.version>2.18.3</jackson.version>

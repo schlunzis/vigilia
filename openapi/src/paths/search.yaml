@@ -1,0 +1,44 @@
+post:
+  summary: Search for files
+  description: |
+    This endpoint allows you to search for indexed files.
+    You can specify the page number and size for pagination.
+    The search query is required in the request body.
+  operationId: searchFiles
+  tags:
+    - search
+  parameters:
+    - name: pageNumber
+      in: query
+      description: Page number
+      required: false
+      schema:
+        default: 0
+        type: integer
+        format: int32
+    - name: pageSize
+      in: query
+      description: Page size
+      required: false
+      schema:
+        default: 10
+        type: integer
+        format: int32
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: '../components/schemas/search/searchRequest.yaml'
+  responses:
+    '200':
+      description: Search successful
+      content:
+        application/json:
+          schema:
+            type: array
+            minItems: 0
+            items:
+              $ref: '../components/schemas/search/searchResult.yaml'
+    '400':
+      description: Bad request

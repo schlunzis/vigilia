@@ -1,0 +1,31 @@
+description: |
+  This is the base for all converter structures.
+  The converterType is used as a discriminator to determine the specific structure.
+type: object
+oneOf:
+  - $ref: './fileSourceReader.yaml'
+  - $ref: './websiteSourceReader.yaml'
+discriminator:
+  propertyName: sourceType
+  mapping:
+    FILE: './fileSourceReader.yaml'
+    WEBSITE: './websiteSourceReader.yaml'
+required:
+  - sourceType
+properties:
+  sourceType:
+    $ref: '../sourceType.yaml'
+  id:
+    type: string
+    format: uuid
+    description: The unique identifier for the source reader
+  name:
+    type: string
+    description: The name of the source reader
+  description:
+    type: string
+    description: A brief description of the source reader
+  priority:
+    type: integer
+    description: The priority of the source reader (lower numbers indicate higher priority)
+    minimum: 1

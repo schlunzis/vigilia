@@ -2,10 +2,13 @@ package org.schlunzis.vigilia.core.api;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.schlunzis.vigilia.core.embedding.EmbeddingsManager;
-import org.schlunzis.vigilia.core.embedding.MetadataKeys;
-import org.schlunzis.vigilia.core.embedding.Result;
+import org.schlunzis.vigilia.core.controller.SearchApiDelegate;
+import org.schlunzis.vigilia.core.data.mapper.SearchResultMapper;
+import org.schlunzis.vigilia.core.embedding.EmbeddingService;
+import org.schlunzis.vigilia.core.model.SearchRequestDTO;
 import org.schlunzis.vigilia.core.model.SearchResultDTO;
+import org.springframework.ai.document.Document;
+import org.springframework.ai.vectorstore.SearchRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
@@ -17,26 +20,20 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class SearchService implements SearchApiDelegate {
 
-    private final EmbeddingsManager embeddingsManager;
+    private final EmbeddingService embeddingService;
+    private final SearchResultMapper searchResultMapper;
 
     @Override
-    public ResponseEntity<List<SearchResultDTO>> searchFiles(String query, Optional<Integer> pageNumber, Optional<Integer> pageSize) {
-        log.info("Searching files: {}", query);
+    public ResponseEntity<List<SearchResultDTO>> searchFiles(SearchRequestDTO searchRequestDTO, Optional<Integer> pageNumber, Optional<Integer> pageSize) {
+        SearchRequest searchRequest = SearchRequest.builder()
+                .query(searchRequestDTO.getQuery())
+                .build();
 
-        long startTime = System.currentTimeMillis();
-        int pn = pageNumber.orElseThrow();
-        int ps = pageSize.orElseThrow();
-        List<Result> results = embeddingsManager.query(query, pn, ps);
-
-        log.info("Search took {} ms", System.currentTimeMillis() - startTime);
-        return ResponseEntity.ok(results
-                .stream()
-                .map(r -> new SearchResultDTO()
-                        .path(r.textSegment().metadata().getString(MetadataKeys.PATH))
-                        .score(r.similarityScore())
-                        .text(r.textSegment().text())
-                )
-                .toList());
+        List<Document> documents = embeddingService.search(searchRequest);
+        List<SearchResultDTO> results = documents.stream()
+                .map(searchResultMapper::toDTO)
+                .toList();
+        return ResponseEntity.ok(results);
     }
 
 }

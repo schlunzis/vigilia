@@ -1,0 +1,91 @@
+root:
+  get:
+    summary: Retrieve a list of sources
+    operationId: listSources
+    tags:
+      - sources
+    parameters:
+      - in: query
+        name: filterExpression
+        description: |
+          An optional filter expression to filter the sources.
+          This can be used to filter results based on specific criteria.
+          The syntax of the filter expression can be found in the server documentation.
+        schema:
+          type: string
+    responses:
+      '200':
+        description: A list of sources
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '../components/schemas/sources/source.yaml'
+
+  post:
+    summary: Create a new source
+    operationId: createSource
+    tags:
+      - sources
+    requestBody:
+      description: Source to add
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '../components/schemas/sources/source.yaml'
+    responses:
+      '201':
+        description: Source created successfully
+        content:
+          application/json:
+            schema:
+              $ref: '../components/schemas/sources/source.yaml'
+      '400':
+        description: Bad request
+      '409':
+        description: Conflict - Source already exists
+
+  delete:
+    summary: Delete a source
+    operationId: deleteSource
+    tags:
+      - sources
+    parameters:
+      - in: query
+        name: id
+        description: The identifier of the source to delete
+        schema:
+          type: string
+          format: uuid
+        required: true
+    responses:
+      '204':
+        description: Source deleted successfully
+      '404':
+        description: Source not found
+
+readers:
+  get:
+    summary: Retrieve a list of source readers
+    operationId: listSourcesReaders
+    tags:
+      - sources
+      - readers
+    parameters:
+      - in: query
+        name: readerId
+        description: An optional reader ID to filter the source readers
+        schema:
+          type: string
+          format: uuid
+    responses:
+      '200':
+        description: A list of source readers
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '../components/schemas/sources/readers/sourceReader.yaml'

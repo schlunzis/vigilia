@@ -1,0 +1,15 @@
+type: object
+required:
+  - sourceType
+properties:
+  sourceType:
+    $ref: '../sourceType.yaml'
+  supportedDomains:
+    type: array
+    description: |
+      A list of domain names that this website source reader can handle (e.g., ["example.com", "anotherdomain.org"])
+      Wildcards are supported (e.g., ["*.example.com"] to include all subdomains).
+    items:
+      type: string
+    minItems: 1
+    uniqueItems: true
