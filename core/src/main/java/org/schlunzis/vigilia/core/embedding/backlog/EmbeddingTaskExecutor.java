@@ -5,6 +5,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.schlunzis.vigilia.core.autoconfigure.EmbeddingProperties;
 import org.schlunzis.vigilia.core.embedding.EmbeddingService;
+import org.schlunzis.vigilia.core.state.ApplicationStateProvider;
+import org.schlunzis.vigilia.core.state.IndexingState;
 import org.springframework.ai.retry.NonTransientAiException;
 import org.springframework.ai.vectorstore.VectorStore;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
@@ -24,6 +26,7 @@ public class EmbeddingTaskExecutor {
     private final EmbeddingBacklog embeddingBacklog;
     private final VectorStore vectorStore;
     private final EmbeddingProperties embeddingProperties;
+    private final ApplicationStateProvider applicationStateProvider;
     /**
      * This counter is used to track the number of unknown errors that occur during the processing of embedding tasks.
      * If too many unknown errors occur in succession, the task executor thread will be stopped to prevent excessive
@@ -40,7 +43,9 @@ public class EmbeddingTaskExecutor {
                     log.info("Started embedding task executor thread");
                     while (!Thread.currentThread().isInterrupted()) {
                         try {
+                            applicationStateProvider.setIndexingState(IndexingState.IDLE);
                             EmbeddingTask task = embeddingBacklog.peek();
+                            applicationStateProvider.setIndexingState(IndexingState.INDEXING);
                             task.isProcessing().set(true);
                             log.info("Embedding task with {} documents started", task.documents().size());
                             processTask(task);
@@ -63,6 +68,7 @@ public class EmbeddingTaskExecutor {
     @PreDestroy
     public void stop() {
         log.info("Stopping embedding task executor thread");
+        applicationStateProvider.setIndexingState(IndexingState.ERROR);
         if (taskExecutorThread != null && taskExecutorThread.isAlive()) {
             taskExecutorThread.interrupt();
             try {

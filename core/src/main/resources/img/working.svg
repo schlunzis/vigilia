@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Minimal “working” icon – a circle with three spokes -->
+<svg
+        width="64"
+        height="64"
+        viewBox="0 0 64 64"
+        xmlns="http://www.w3.org/2000/svg"
+        role="img"
+        aria-labelledby="title desc">
+
+    <title id="title">Working state</title>
+    <desc id="desc">A thin circular outline with three short radial lines, suggesting motion.</desc>
+
+    <!-- Outer circle -->
+    <circle
+            cx="32"
+            cy="32"
+            r="28"
+            stroke="#555"
+            stroke-width="4"
+            fill="none"/>
+
+    <!-- Three spokes (12 o’clock, 4 o’clock, 8 o’clock) -->
+    <line x1="32" y1="4" x2="32" y2="14" stroke="#555" stroke-width="4" stroke-linecap="round"/>
+    <line x1="50.5" y1="13.5" x2="44.5" y2="19.5" stroke="#555" stroke-width="4" stroke-linecap="round"/>
+    <line x1="13.5" y1="13.5" x2="19.5" y2="19.5" stroke="#555" stroke-width="4" stroke-linecap="round"/>
+</svg>
