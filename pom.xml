@@ -9,6 +9,7 @@
     <version>1.0-SNAPSHOT</version>
     <packaging>pom</packaging>
     <modules>
+        <module>spring-ai-sqlite-store</module>
         <module>core</module>
         <module>cli</module>
         <module>fx-gui</module>

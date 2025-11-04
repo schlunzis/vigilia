@@ -12,7 +12,7 @@ public class VigiliaProperties {
     private Datasource datasource = new Datasource();
 
     @Data
-    private static class Datasource {
+    public static class Datasource {
         private String url;
     }
 }

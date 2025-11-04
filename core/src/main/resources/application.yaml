@@ -4,6 +4,7 @@ spring:
   jpa:
     hibernate:
       ddl-auto: update
+    database-platform: org.hibernate.community.dialect.SQLiteDialect
   cache:
     cache-names:
       - embeddingSearch
@@ -15,6 +16,7 @@ server:
 vigilia:
   data:
     appdir: ${user.home}${file.separator}.vigilia
-    datasource.url: jdbc:sqlite:${vigilia.appdir}${file.separator}vigilia.db
+    datasource.url: jdbc:sqlite:${vigilia.data.appdir}${file.separator}vigilia.db?enable_load_extension=true
   vector-store:
     initialize-schema: true
+    schema-name: public

@@ -1,6 +1,13 @@
 package org.schlunzis.vigilia.core.config;
 
+import lombok.RequiredArgsConstructor;
+import org.schlunzis.vigilia.core.autoconfigure.VigiliaProperties;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.jdbc.datasource.DriverManagerDataSource;
+
+import javax.sql.DataSource;
+import java.io.File;
 
 /**
  * Configuration for the database.
@@ -14,22 +21,23 @@ import org.springframework.context.annotation.Configuration;
  * @see <a href="https://docs.spring.io/spring-boot/how-to/data-access.html#howto.data-access.configure-custom-datasource">Spring Boot Docs</a>
  */
 @Configuration
+@RequiredArgsConstructor
 public class DBConfig {
 
-//    @Bean
-//    @Primary
-//    @ConfigurationProperties("app.datasource")
-//    public DataSourceProperties dataSourceProperties() {
-//        return new DataSourceProperties();
-//    }
-//
-//    @Bean
-//    @ConfigurationProperties("app.datasource.configuration")
-//    public HikariDataSource dataSource(DataSourceProperties properties, @Value("${vigilia.appdir}") String appDir) {
-//        File appDirFile = new File(appDir);
-//        if (!appDirFile.exists()) {
-//            appDirFile.mkdirs();
-//        }
-//        return properties.initializeDataSourceBuilder().type(HikariDataSource.class).build();
-//    }
+    private final VigiliaProperties vigiliaProperties;
+
+    @Bean
+    public DataSource dataSource() {
+        String appDir = vigiliaProperties.getAppdir();
+        File appDirFile = new File(appDir);
+        if (!appDirFile.exists()) {
+            appDirFile.mkdirs();
+        }
+
+        DriverManagerDataSource dataSource = new DriverManagerDataSource();
+        dataSource.setDriverClassName("org.sqlite.JDBC");
+        dataSource.setUrl(vigiliaProperties.getDatasource().getUrl());
+        return dataSource;
+    }
+
 }

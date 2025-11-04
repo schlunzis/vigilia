@@ -5,6 +5,7 @@ import org.schlunzis.vigilia.core.autoconfigure.VectorStoreProperties;
 import org.springframework.ai.embedding.EmbeddingModel;
 import org.springframework.ai.vectorstore.VectorStore;
 import org.springframework.ai.vectorstore.mariadb.MariaDBVectorStore;
+import org.springframework.ai.vectorstore.sqlite.SQLiteVectorStore;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -21,7 +22,7 @@ public class VectorStoreConfig {
 
     @Bean
     public VectorStore vectorStore() {
-        return createMariaDBVectorStore();
+        return createSQLiteVectorStore();
     }
 
     private MariaDBVectorStore createMariaDBVectorStore() {
@@ -43,6 +44,21 @@ public class VectorStoreConfig {
                     "Negative inner product distance is not supported by MariaDBVectorStore."
             ));
         };
+    }
+
+    private SQLiteVectorStore createSQLiteVectorStore() {
+        return SQLiteVectorStore.builder(jdbcTemplate, embeddingModel)
+                .initializeSchema(vsProperties.isInitializeSchema())
+                .removeExistingVectorStoreTable(vsProperties.isRemoveExistingVectorStoreTable())
+                .schemaName(vsProperties.getSchemaName())
+                .vectorTableValidationsEnabled(vsProperties.isSchemaValidation())
+                .vectorTableName(vectorStoreTableNameProvider.getTableName())
+                .distanceType(createSQLiteDistanceType())
+                .build();
+    }
+
+    private SQLiteVectorStore.SQLiteDistanceType createSQLiteDistanceType() {
+        return SQLiteVectorStore.SQLiteDistanceType.COSINE_DISTANCE;
     }
 
 }
