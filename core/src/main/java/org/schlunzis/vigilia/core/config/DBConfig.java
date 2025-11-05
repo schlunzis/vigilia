@@ -1,6 +1,7 @@
 package org.schlunzis.vigilia.core.config;
 
 import lombok.RequiredArgsConstructor;
+import org.schlunzis.vigilia.core.VecDataSource;
 import org.schlunzis.vigilia.core.autoconfigure.VigiliaProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -34,7 +35,7 @@ public class DBConfig {
             appDirFile.mkdirs();
         }
 
-        DriverManagerDataSource dataSource = new DriverManagerDataSource();
+        DriverManagerDataSource dataSource = new VecDataSource();
         dataSource.setDriverClassName("org.sqlite.JDBC");
         dataSource.setUrl(vigiliaProperties.getDatasource().getUrl());
         return dataSource;

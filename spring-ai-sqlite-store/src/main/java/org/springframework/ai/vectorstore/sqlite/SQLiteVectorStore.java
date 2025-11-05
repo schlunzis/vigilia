@@ -39,13 +39,9 @@ import org.springframework.jdbc.core.*;
 import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.StandardCopyOption;
-import java.sql.*;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.*;
 
 /**
@@ -160,8 +156,6 @@ public class SQLiteVectorStore extends AbstractObservationVectorStore implements
 
     public static final String DEFAULT_VECTOR_INDEX_NAME = "spring_ai_vector_index";
 
-    public static final String DEFAULT_SCHEMA_NAME = "public";
-
     public static final boolean DEFAULT_SCHEMA_VALIDATION = false;
 
     public static final int MAX_DOCUMENT_BATCH_SIZE = 10_000;
@@ -178,8 +172,6 @@ public class SQLiteVectorStore extends AbstractObservationVectorStore implements
     private final String vectorIndexName;
 
     private final JdbcTemplate jdbcTemplate;
-
-    private final String schemaName;
 
     private final SQLiteIdType idType;
 
@@ -222,7 +214,6 @@ public class SQLiteVectorStore extends AbstractObservationVectorStore implements
         this.vectorIndexName = this.vectorTableName.equals(DEFAULT_TABLE_NAME) ? DEFAULT_VECTOR_INDEX_NAME
                 : this.vectorTableName + "_index";
 
-        this.schemaName = builder.schemaName;
         this.idType = builder.idType;
         this.schemaValidation = builder.vectorTableValidationsEnabled;
 
@@ -376,13 +367,12 @@ public class SQLiteVectorStore extends AbstractObservationVectorStore implements
     // ---------------------------------------------------------------------------------
     @Override
     public void afterPropertiesSet() {
-        logger.info("Initializing PGVectorStore schema for table: {} in schema: {}", this.getVectorTableName(),
-                this.getSchemaName());
+        logger.info("Initializing PGVectorStore schema for table: {}", this.getVectorTableName());
 
         logger.info("vectorTableValidationsEnabled {}", this.schemaValidation);
 
         if (this.schemaValidation) {
-            this.schemaValidator.validateTableSchema(this.getSchemaName(), this.getVectorTableName());
+            this.schemaValidator.validateTableSchema("sqlite-vector", this.getVectorTableName());
         }
 
         if (!this.initializeSchema) {
@@ -397,47 +387,18 @@ public class SQLiteVectorStore extends AbstractObservationVectorStore implements
             this.jdbcTemplate.execute(String.format("DROP TABLE IF EXISTS %s", this.getFullyQualifiedTableName()));
         }
 
-        this.executeWithExtension(String.format("""
+        logger.info("Initializing PGVectorStore schema for table: {}", this.getFullyQualifiedTableName());
+        this.jdbcTemplate.execute(String.format("""
                 CREATE VIRTUAL TABLE IF NOT EXISTS "%s" USING vec0(
                 	embedding float[%s]
                 )
                 """, this.getFullyQualifiedTableName(), this.embeddingDimensions()));
-    }
 
-    private void executeWithExtension(String sql) {
-        jdbcTemplate.execute((ConnectionCallback<Void>) con -> {
-            loadExtension(con);
-            Statement stmt = con.createStatement();
-            stmt.execute(sql);
-            return null;
-        });
-    }
-
-    private void loadExtension(Connection connection) {
-        loadExtensionFromResource("vec0.so", connection); // FIXME detect platform
-    }
-
-    private void loadExtensionFromResource(String resourcePath, Connection connection) {
-        try (InputStream in = getClass().getResourceAsStream(resourcePath)) {
-            if (in == null) {
-                throw new FileNotFoundException("Resource not found: " + resourcePath);
-            }
-
-            Path tempFile = Files.createTempFile("vec0", ".so");
-            tempFile.toFile().deleteOnExit();
-            Files.copy(in, tempFile, StandardCopyOption.REPLACE_EXISTING);
-
-            Statement stmt = connection.createStatement();
-            stmt.execute(String.format("SELECT load_extension('%s')", tempFile.toAbsolutePath()));
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
+        logger.info("Initialized DB");
     }
 
     private String getFullyQualifiedTableName() {
-        return this.schemaName + "." + this.vectorTableName;
+        return this.vectorTableName;
     }
 
     private SQLiteIdType getIdType() {
@@ -446,10 +407,6 @@ public class SQLiteVectorStore extends AbstractObservationVectorStore implements
 
     private String getVectorTableName() {
         return this.vectorTableName;
-    }
-
-    private String getSchemaName() {
-        return this.schemaName;
     }
 
     private String getVectorIndexName() {
@@ -490,7 +447,7 @@ public class SQLiteVectorStore extends AbstractObservationVectorStore implements
         return VectorStoreObservationContext.builder(VectorStoreProvider.PG_VECTOR.value(), operationName)
                 .collectionName(this.vectorTableName)
                 .dimensions(this.embeddingDimensions())
-                .namespace(this.schemaName)
+                .namespace("sqlite-vector-store")
                 .similarityMetric(getSimilarityMetric());
     }
 
@@ -618,8 +575,6 @@ public class SQLiteVectorStore extends AbstractObservationVectorStore implements
 
         private final JdbcTemplate jdbcTemplate;
 
-        private String schemaName = SQLiteVectorStore.DEFAULT_SCHEMA_NAME;
-
         private String vectorTableName = SQLiteVectorStore.DEFAULT_TABLE_NAME;
 
         private SQLiteIdType idType = SQLiteVectorStore.DEFAULT_ID_TYPE;
@@ -642,11 +597,6 @@ public class SQLiteVectorStore extends AbstractObservationVectorStore implements
             super(embeddingModel);
             Assert.notNull(jdbcTemplate, "JdbcTemplate must not be null");
             this.jdbcTemplate = jdbcTemplate;
-        }
-
-        public SQLiteVectorStoreBuilder schemaName(String schemaName) {
-            this.schemaName = schemaName;
-            return this;
         }
 
         public SQLiteVectorStoreBuilder vectorTableName(String vectorTableName) {

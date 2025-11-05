@@ -50,7 +50,6 @@ public class VectorStoreConfig {
         return SQLiteVectorStore.builder(jdbcTemplate, embeddingModel)
                 .initializeSchema(vsProperties.isInitializeSchema())
                 .removeExistingVectorStoreTable(vsProperties.isRemoveExistingVectorStoreTable())
-                .schemaName(vsProperties.getSchemaName())
                 .vectorTableValidationsEnabled(vsProperties.isSchemaValidation())
                 .vectorTableName(vectorStoreTableNameProvider.getTableName())
                 .distanceType(createSQLiteDistanceType())
