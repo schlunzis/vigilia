@@ -22,7 +22,6 @@ import com.fasterxml.jackson.databind.json.JsonMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.ai.document.Document;
-import org.springframework.ai.document.DocumentMetadata;
 import org.springframework.ai.embedding.EmbeddingModel;
 import org.springframework.ai.embedding.EmbeddingOptionsBuilder;
 import org.springframework.ai.observation.conventions.VectorStoreProvider;
@@ -37,7 +36,6 @@ import org.springframework.ai.vectorstore.observation.VectorStoreObservationCont
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.jdbc.core.*;
 import org.springframework.util.Assert;
-import org.springframework.util.StringUtils;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -150,7 +148,7 @@ public class SQLiteVectorStore extends AbstractObservationVectorStore implements
 
     public static final int INVALID_EMBEDDING_DIMENSION = -1;
 
-    public static final String DEFAULT_TABLE_NAME = "vector_store";
+    public static final String DEFAULT_TABLE_NAME_PREFIX = "vector_store";
 
     public static final SQLiteIdType DEFAULT_ID_TYPE = SQLiteIdType.UUID;
 
@@ -167,7 +165,9 @@ public class SQLiteVectorStore extends AbstractObservationVectorStore implements
 
     public final FilterExpressionConverter filterExpressionConverter = new PgVectorFilterExpressionConverter();
 
+    private final String vectorTableNamePrefix;
     private final String vectorTableName;
+    private final String metadataTableName;
 
     private final String vectorIndexName;
 
@@ -206,13 +206,13 @@ public class SQLiteVectorStore extends AbstractObservationVectorStore implements
         this.objectMapper = JsonMapper.builder().addModules(JacksonUtils.instantiateAvailableModules()).build();
         this.documentRowMapper = new DocumentRowMapper(this.objectMapper);
 
-        String vectorTable = builder.vectorTableName;
-        this.vectorTableName = vectorTable.isEmpty() ? DEFAULT_TABLE_NAME : vectorTable.trim();
-        logger.info("Using the vector table name: {}. Is empty: {}", this.vectorTableName,
-                this.vectorTableName.isEmpty());
+        String vectorTablePrefix = builder.vectorTableNamePrefix;
+        this.vectorTableNamePrefix = vectorTablePrefix.isEmpty() ? DEFAULT_TABLE_NAME_PREFIX : vectorTablePrefix.trim();
+        this.vectorTableName = vectorTablePrefix + "_vectors";
+        this.metadataTableName = vectorTablePrefix + "_metadata";
 
-        this.vectorIndexName = this.vectorTableName.equals(DEFAULT_TABLE_NAME) ? DEFAULT_VECTOR_INDEX_NAME
-                : this.vectorTableName + "_index";
+        this.vectorIndexName = this.vectorTableNamePrefix.equals(DEFAULT_TABLE_NAME_PREFIX) ? DEFAULT_VECTOR_INDEX_NAME
+                : this.vectorTableNamePrefix + "_index";
 
         this.idType = builder.idType;
         this.schemaValidation = builder.vectorTableValidationsEnabled;
@@ -253,29 +253,18 @@ public class SQLiteVectorStore extends AbstractObservationVectorStore implements
     }
 
     private void insertOrUpdateBatch(List<Document> batch, List<Document> documents, List<float[]> embeddings) {
-        String sql = "INSERT INTO " + getFullyQualifiedTableName()
-                + " (id, content, metadata, embedding) VALUES (?, ?, ?::jsonb, ?) " + "ON CONFLICT (id) DO "
-                + "UPDATE SET content = ? , metadata = ?::jsonb , embedding = ? ";
+        String vectorSQL = "INSERT INTO " + vectorTableName + " (rowId, embedding) VALUES (?, ?)";
 
-        this.jdbcTemplate.batchUpdate(sql, new BatchPreparedStatementSetter() {
-
+        this.jdbcTemplate.batchUpdate(vectorSQL, new BatchPreparedStatementSetter() {
             @Override
             public void setValues(PreparedStatement ps, int i) throws SQLException {
+                Document document = batch.get(i);
+                long id = UUID.fromString(document.getId()).getLeastSignificantBits();
+                String embedding = vectorToJson(embeddings.get(documents.indexOf(document)));
 
-                var document = batch.get(i);
-                var id = convertIdToPgType(document.getId());
-                var content = document.getText();
-                var json = toJson(document.getMetadata());
-                var embedding = embeddings.get(documents.indexOf(document));
-                var pGvector = embedding;
 
                 StatementCreatorUtils.setParameterValue(ps, 1, SqlTypeValue.TYPE_UNKNOWN, id);
-                StatementCreatorUtils.setParameterValue(ps, 2, SqlTypeValue.TYPE_UNKNOWN, content);
-                StatementCreatorUtils.setParameterValue(ps, 3, SqlTypeValue.TYPE_UNKNOWN, json);
-                StatementCreatorUtils.setParameterValue(ps, 4, SqlTypeValue.TYPE_UNKNOWN, pGvector);
-                StatementCreatorUtils.setParameterValue(ps, 5, SqlTypeValue.TYPE_UNKNOWN, content);
-                StatementCreatorUtils.setParameterValue(ps, 6, SqlTypeValue.TYPE_UNKNOWN, json);
-                StatementCreatorUtils.setParameterValue(ps, 7, SqlTypeValue.TYPE_UNKNOWN, pGvector);
+                StatementCreatorUtils.setParameterValue(ps, 2, SqlTypeValue.TYPE_UNKNOWN, embedding);
             }
 
             @Override
@@ -283,6 +272,40 @@ public class SQLiteVectorStore extends AbstractObservationVectorStore implements
                 return batch.size();
             }
         });
+
+        String metadataSQL = "INSERT INTO " + metadataTableName
+                + " (id, content, metadata, embeddingId) VALUES (?, ?, ?, ?) ON CONFLICT (id) DO UPDATE SET content = ? , metadata = ?";
+
+        this.jdbcTemplate.batchUpdate(metadataSQL, new BatchPreparedStatementSetter() {
+            @Override
+            public void setValues(PreparedStatement ps, int i) throws SQLException {
+                Document document = batch.get(i);
+                UUID id = UUID.fromString(document.getId());
+                long embeddingId = UUID.fromString(document.getId()).getLeastSignificantBits();
+                String content = document.getText();
+                String json = toJson(document.getMetadata());
+
+                StatementCreatorUtils.setParameterValue(ps, 1, SqlTypeValue.TYPE_UNKNOWN, id);
+                StatementCreatorUtils.setParameterValue(ps, 2, SqlTypeValue.TYPE_UNKNOWN, content);
+                StatementCreatorUtils.setParameterValue(ps, 3, SqlTypeValue.TYPE_UNKNOWN, json);
+                StatementCreatorUtils.setParameterValue(ps, 4, SqlTypeValue.TYPE_UNKNOWN, embeddingId);
+                StatementCreatorUtils.setParameterValue(ps, 5, SqlTypeValue.TYPE_UNKNOWN, content);
+                StatementCreatorUtils.setParameterValue(ps, 6, SqlTypeValue.TYPE_UNKNOWN, json);
+            }
+
+            @Override
+            public int getBatchSize() {
+                return batch.size();
+            }
+        });
+    }
+
+    private String vectorToJson(float[] vector) {
+        try {
+            return this.objectMapper.writeValueAsString(vector);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     private String toJson(Map<String, Object> map) {
@@ -304,7 +327,7 @@ public class SQLiteVectorStore extends AbstractObservationVectorStore implements
 
     @Override
     public void doDelete(List<String> idList) {
-        String sql = "DELETE FROM " + getFullyQualifiedTableName() + " WHERE id = ?";
+        String sql = "DELETE FROM " + vectorTableName + " WHERE id = ?";
 
         this.jdbcTemplate.batchUpdate(sql, new BatchPreparedStatementSetter() {
 
@@ -325,7 +348,7 @@ public class SQLiteVectorStore extends AbstractObservationVectorStore implements
     protected void doDelete(Filter.Expression filterExpression) {
         String nativeFilterExpression = this.filterExpressionConverter.convertExpression(filterExpression);
 
-        String sql = "DELETE FROM " + getFullyQualifiedTableName() + " WHERE metadata::jsonb @@ '"
+        String sql = "DELETE FROM " + vectorTableName + " WHERE metadata::jsonb @@ '"
                 + nativeFilterExpression + "'::jsonpath";
 
         // Execute the delete
@@ -338,28 +361,25 @@ public class SQLiteVectorStore extends AbstractObservationVectorStore implements
 
     @Override
     public List<Document> doSimilaritySearch(SearchRequest request) {
-        String nativeFilterExpression = (request.getFilterExpression() != null)
-                ? this.filterExpressionConverter.convertExpression(request.getFilterExpression()) : "";
-
-        String jsonPathFilter = "";
-
-        if (StringUtils.hasText(nativeFilterExpression)) {
-            jsonPathFilter = " AND metadata::jsonb @@ '" + nativeFilterExpression + "'::jsonpath ";
-        }
-
         double distance = 1 - request.getSimilarityThreshold();
 
         float[] queryEmbedding = getQueryEmbedding(request.getQuery());
+        String jsonQueryEmbedding = vectorToJson(queryEmbedding);
 
         return this.jdbcTemplate.query(
-                String.format(this.getDistanceType().similaritySearchSqlTemplate, getFullyQualifiedTableName(),
-                        jsonPathFilter),
-                this.documentRowMapper, queryEmbedding, queryEmbedding, distance, request.getTopK());
+                String.format("""
+                                SELECT m.id AS id, m.content AS content, m.metadata AS metadata, v.distance AS distance
+                                FROM %s v
+                                JOIN %s m ON m.embeddingId = v.rowId
+                                WHERE v.embedding match '%s'
+                                AND k = %d
+                                ORDER BY distance
+                                """,
+                        this.vectorTableName, this.metadataTableName, jsonQueryEmbedding, request.getTopK()), this.documentRowMapper);
     }
 
     private float[] getQueryEmbedding(String query) {
-        float[] embedding = this.embeddingModel.embed(query);
-        return embedding;
+        return this.embeddingModel.embed(query);
     }
 
     // ---------------------------------------------------------------------------------
@@ -367,16 +387,17 @@ public class SQLiteVectorStore extends AbstractObservationVectorStore implements
     // ---------------------------------------------------------------------------------
     @Override
     public void afterPropertiesSet() {
-        logger.info("Initializing PGVectorStore schema for table: {}", this.getVectorTableName());
+        logger.info("Initializing PGVectorStore schema for table: {}", this.getVectorTableNamePrefix());
 
         logger.info("vectorTableValidationsEnabled {}", this.schemaValidation);
 
         if (this.schemaValidation) {
-            this.schemaValidator.validateTableSchema("sqlite-vector", this.getVectorTableName());
+            this.schemaValidator.validateTableSchema("sqlite-vector", this.getVectorTableNamePrefix());
         }
 
         if (!this.initializeSchema) {
-            logger.debug("Skipping the schema initialization for the table: {}", this.getFullyQualifiedTableName());
+            logger.debug("Skipping the schema initialization for the table: {}", this.vectorTableName);
+            logger.debug("Skipping the schema initialization for the table: {}", this.metadataTableName);
             return;
         }
 
@@ -384,29 +405,34 @@ public class SQLiteVectorStore extends AbstractObservationVectorStore implements
 
         // Remove existing VectorStoreTable
         if (this.removeExistingVectorStoreTable) {
-            this.jdbcTemplate.execute(String.format("DROP TABLE IF EXISTS %s", this.getFullyQualifiedTableName()));
+            this.jdbcTemplate.execute(String.format("DROP TABLE IF EXISTS %s", this.vectorTableName));
+            this.jdbcTemplate.execute(String.format("DROP TABLE IF EXISTS %s", this.metadataTableName));
         }
 
-        logger.info("Initializing PGVectorStore schema for table: {}", this.getFullyQualifiedTableName());
         this.jdbcTemplate.execute(String.format("""
                 CREATE VIRTUAL TABLE IF NOT EXISTS "%s" USING vec0(
                 	embedding float[%s]
                 )
-                """, this.getFullyQualifiedTableName(), this.embeddingDimensions()));
+                """, this.vectorTableName, this.embeddingDimensions()));
+        this.jdbcTemplate.execute(String.format("""
+                        CREATE TABLE IF NOT EXISTS "%s" (
+                        	id BLOB PRIMARY KEY,
+                        	content TEXT NOT NULL,
+                        	metadata json,
+                        	embeddingId INTEGER REFERENCES "%s" (rowid) ON DELETE CASCADE
+                        )
+                        """
+                , this.metadataTableName, this.vectorTableName));
 
         logger.info("Initialized DB");
-    }
-
-    private String getFullyQualifiedTableName() {
-        return this.vectorTableName;
     }
 
     private SQLiteIdType getIdType() {
         return this.idType;
     }
 
-    private String getVectorTableName() {
-        return this.vectorTableName;
+    private String getVectorTableNamePrefix() {
+        return this.vectorTableNamePrefix;
     }
 
     private String getVectorIndexName() {
@@ -445,7 +471,7 @@ public class SQLiteVectorStore extends AbstractObservationVectorStore implements
     public VectorStoreObservationContext.Builder createObservationContextBuilder(String operationName) {
 
         return VectorStoreObservationContext.builder(VectorStoreProvider.PG_VECTOR.value(), operationName)
-                .collectionName(this.vectorTableName)
+                .collectionName(this.vectorTableNamePrefix)
                 .dimensions(this.embeddingDimensions())
                 .namespace("sqlite-vector-store")
                 .similarityMetric(getSimilarityMetric());
@@ -547,10 +573,9 @@ public class SQLiteVectorStore extends AbstractObservationVectorStore implements
             String id = rs.getString(COLUMN_ID);
             String content = rs.getString(COLUMN_CONTENT);
             String pgMetadata = rs.getObject(COLUMN_METADATA, String.class);
-            Float distance = rs.getFloat(COLUMN_DISTANCE);
+            float distance = rs.getFloat(COLUMN_DISTANCE);
 
             Map<String, Object> metadata = toMap(pgMetadata);
-            metadata.put(DocumentMetadata.DISTANCE.value(), distance);
 
             // @formatter:off
 			return Document.builder()
@@ -575,7 +600,7 @@ public class SQLiteVectorStore extends AbstractObservationVectorStore implements
 
         private final JdbcTemplate jdbcTemplate;
 
-        private String vectorTableName = SQLiteVectorStore.DEFAULT_TABLE_NAME;
+        private String vectorTableNamePrefix = SQLiteVectorStore.DEFAULT_TABLE_NAME_PREFIX;
 
         private SQLiteIdType idType = SQLiteVectorStore.DEFAULT_ID_TYPE;
 
@@ -599,8 +624,8 @@ public class SQLiteVectorStore extends AbstractObservationVectorStore implements
             this.jdbcTemplate = jdbcTemplate;
         }
 
-        public SQLiteVectorStoreBuilder vectorTableName(String vectorTableName) {
-            this.vectorTableName = vectorTableName;
+        public SQLiteVectorStoreBuilder vectorTableNamePrefix(String vectorTableNamePrefix) {
+            this.vectorTableNamePrefix = vectorTableNamePrefix;
             return this;
         }
 

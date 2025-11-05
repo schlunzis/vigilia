@@ -51,7 +51,7 @@ public class VectorStoreConfig {
                 .initializeSchema(vsProperties.isInitializeSchema())
                 .removeExistingVectorStoreTable(vsProperties.isRemoveExistingVectorStoreTable())
                 .vectorTableValidationsEnabled(vsProperties.isSchemaValidation())
-                .vectorTableName(vectorStoreTableNameProvider.getTableName())
+                .vectorTableNamePrefix(vectorStoreTableNameProvider.getTableName())
                 .distanceType(createSQLiteDistanceType())
                 .build();
     }
